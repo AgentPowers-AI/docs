@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
+  "theme": "mint",
   "name": "AgentPowers",
   "colors": {
-    "primary": "#6D28D9",
-    "light": "#8B5CF6",
-    "dark": "#5B21B6"
+    "primary": "#38BDB8",
+    "light": "#4DCDC8",
+    "dark": "#2A9D98"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -77,5 +77,15 @@
   },
   "seo": {
     "indexing": "navigable"
+  },
+  "background": {
+    "color": {
+      "dark": "#0C0C0E",
+      "light": "#FAFAF9"
+    }
+  },
+  "description": "Documentation for AgentPowers",
+  "appearance": {
+    "default": "dark"
   }
 }
