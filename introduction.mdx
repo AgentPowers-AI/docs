@@ -1,0 +1,44 @@
+---
+title: Introduction
+description: A paid marketplace for Claude Code skills and agents
+---
+
+# AgentPowers
+
+AgentPowers is a marketplace for Claude Code skills and agents. It adds a payment layer to the Claude plugin ecosystem, enabling creators to monetize their work and buyers to discover security-vetted premium content.
+
+## What AgentPowers Does
+
+- **For buyers**: Discover, purchase, and install skills and agents across Claude Code (CLI), Claude Cowork (desktop), and claude.ai (web)
+- **For creators**: Publish skills/agents, set prices, receive payouts via Stripe Connect
+- **For everyone**: Every submission passes a multi-layer security pipeline before listing
+
+## How It Works
+
+<CardGroup cols={2}>
+  <Card title="Browse & Search" icon="magnifying-glass">
+    Find skills by category, keyword, or type. Filter by price, security status, and sort by popularity.
+  </Card>
+  <Card title="Purchase & Install" icon="download">
+    Free skills install instantly. Paid skills use Stripe Checkout with license codes for offline redemption.
+  </Card>
+  <Card title="Publish & Earn" icon="upload">
+    Package your skill, submit for security review, and earn 90% of each sale via Stripe Connect.
+  </Card>
+  <Card title="Security First" icon="shield-check">
+    Static validation, VirusTotal scanning, AI security review, and agent-specific trust scoring on every submission.
+  </Card>
+</CardGroup>
+
+## Access Methods
+
+| Method | Best For | Install |
+|--------|----------|---------|
+| **CLI** (`ap` command) | Power users, CI/CD | `pip install agentpowers` |
+| **Plugin** (MCP server) | In-conversation browsing | `claude /plugin install agentpowers` |
+| **Website** | Discovery, browsing | [agentpowers.ai](https://agentpowers.ai) |
+| **API** | Custom integrations | See [API Reference](/api-reference) |
+
+## Platform Fee
+
+AgentPowers charges a 10% platform fee on paid sales. Creators receive 90% of each transaction via Stripe Connect payouts.

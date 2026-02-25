@@ -1,0 +1,62 @@
+---
+title: Authentication
+description: How authentication works in AgentPowers
+---
+
+## Overview
+
+AgentPowers uses [Clerk](https://clerk.com) for authentication. JWTs issued by Clerk are verified on every authenticated API request.
+
+## API Authentication
+
+Include a Bearer token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  https://api.agentpowers.ai/v1/purchases
+```
+
+## CLI Authentication
+
+The CLI handles authentication automatically:
+
+```bash
+ap login
+```
+
+This opens your browser for OAuth sign-in. After authenticating, the token is stored locally at `~/.agentpowers/auth.json` with restricted file permissions (0600).
+
+```bash
+ap whoami    # Check current session
+ap logout    # Clear stored token
+```
+
+## Plugin Authentication
+
+The MCP plugin shares the same auth token stored by the CLI at `~/.agentpowers/auth.json`. Login once with the CLI and the plugin picks it up automatically.
+
+## Public vs Authenticated Endpoints
+
+| Endpoint | Auth Required |
+|----------|:------------:|
+| `GET /v1/skills` | No |
+| `GET /v1/skills/{slug}` | No |
+| `GET /v1/search` | No |
+| `GET /v1/categories` | No |
+| `GET /v1/skills/{slug}/download` (free) | No |
+| `GET /v1/skills/{slug}/download` (paid) | Yes |
+| `POST /v1/skills` | Yes |
+| `POST /v1/checkout` | Yes |
+| `GET /v1/purchases` | Yes |
+| `POST /v1/installations` | Yes |
+| `POST /v1/sellers/connect` | Yes |
+
+## Rate Limits
+
+| Tier | Limit |
+|------|-------|
+| Public reads | 60 requests/minute |
+| Authenticated reads | 10 requests/minute |
+| Write operations | 20 requests/minute |
+
+Rate limits are per IP for unauthenticated requests and per user for authenticated requests. Exceeding the limit returns `429 Too Many Requests`.

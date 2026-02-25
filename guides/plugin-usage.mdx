@@ -1,0 +1,104 @@
+---
+title: Plugin Usage
+description: Browse and install skills directly inside Claude Code conversations
+---
+
+## Installation
+
+Install the AgentPowers plugin in Claude Code:
+
+```bash
+claude /plugin install agentpowers
+claude /plugin enable agentpowers
+```
+
+The plugin runs an MCP server that gives Claude access to marketplace tools during your conversation.
+
+## Authentication
+
+The plugin shares the same auth token stored by the CLI at `~/.agentpowers/auth.json`. Log in once with the CLI:
+
+```bash
+ap login
+```
+
+The plugin picks up the token automatically.
+
+## Available Tools
+
+Once enabled, Claude has access to these tools during conversation:
+
+### search_skills
+
+Search the marketplace by keyword:
+
+```
+"Find me a Python testing skill"
+```
+
+Claude calls `search_skills` with your query and presents matching results.
+
+### get_skill
+
+View details about a specific skill:
+
+```
+"Show me details for the code-review-pro skill"
+```
+
+Returns the full skill description, price, security status, and download count.
+
+### install_skill
+
+Install a skill directly from conversation:
+
+```
+"Install the code-review-pro skill"
+```
+
+For free skills, installation happens immediately. For paid skills, Claude opens Stripe Checkout in your browser.
+
+### list_categories
+
+Browse available categories:
+
+```
+"What skill categories are available?"
+```
+
+## Platforms
+
+The plugin works across:
+
+| Platform | Support |
+|----------|---------|
+| Claude Code (CLI) | Full support |
+| Claude Cowork (desktop) | Full support |
+| claude.ai (web) | ZIP download fallback |
+
+## Troubleshooting
+
+### Plugin not loading
+
+Verify the plugin is installed and enabled:
+
+```bash
+claude /plugin list
+```
+
+### Authentication errors
+
+Re-authenticate via the CLI:
+
+```bash
+ap logout
+ap login
+```
+
+### Skill not installing
+
+Check that the target directory exists and is writable:
+
+```bash
+ls -la ~/.claude/skills/
+```

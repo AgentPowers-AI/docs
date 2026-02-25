@@ -1,0 +1,90 @@
+---
+title: Security Pipeline
+description: How AgentPowers vets every skill and agent submission
+---
+
+## Overview
+
+Every skill and agent submission passes through a multi-layer security pipeline before listing. No manual review is required for most submissions — the pipeline runs automatically.
+
+## Pipeline Stages
+
+### 1. Static Validation
+
+The first layer checks the submission package itself:
+
+- **File type verification** — Only allowed file types pass through
+- **Dangerous pattern scanning** — Regex checks for shell commands, environment variable harvesting, obfuscation techniques
+- **Size limits** — Packages must stay within size constraints
+
+### 2. VirusTotal Scan
+
+The package is submitted to VirusTotal for malware detection:
+
+- Scanned against 70+ antivirus engines
+- Results checked for any positive detections
+- Known-clean files are cached to avoid redundant scans
+
+### 3. AI Security Review
+
+An AI-powered semantic analysis checks for:
+
+- **Prompt injection** — Attempts to override Claude's instructions
+- **Authentication flaws** — Improper credential handling
+- **Data exposure** — Leaking user data or API keys
+- **Privilege escalation** — Requesting unnecessary permissions
+
+### 4. Agent-Specific Checks
+
+Submissions of type `agent` receive additional scrutiny:
+
+- **Tool access audit** — Which tools does the agent request?
+- **Instruction analysis** — Are instructions appropriate for the declared purpose?
+- **Trust level scoring** — Overall risk assessment based on capabilities requested
+
+## Outcomes
+
+| Result | Effect |
+|--------|--------|
+| **Pass** | Listed immediately in the marketplace |
+| **Warn** | Listed with a warning badge visible to buyers |
+| **Block** | Rejected — the creator receives detailed findings |
+
+## Timing
+
+Most submissions complete the full pipeline within minutes. Complex packages or high-traffic periods may take longer.
+
+## For Creators
+
+### Avoiding Rejections
+
+- Do not include shell commands that modify system files
+- Do not access environment variables beyond what your skill needs
+- Do not attempt to override Claude's safety instructions
+- Keep file types to text, markdown, JSON, and standard code files
+
+### Appealing a Block
+
+If your submission is blocked and you believe the finding is a false positive, update your package to address the findings and resubmit. Each resubmission goes through the full pipeline again.
+
+## For Buyers
+
+### Reading Security Status
+
+Every skill in the marketplace displays its security status:
+
+- **Pass** — No issues detected
+- **Warn** — Minor concerns flagged; review the badge details before installing
+
+Skills with a **Block** status are never listed.
+
+### Reporting Concerns
+
+If you discover a security issue with an installed skill, report it through the API:
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/report" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"skill_slug": "suspicious-skill", "reason": "Description of concern"}'
+```

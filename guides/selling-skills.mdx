@@ -1,0 +1,91 @@
+---
+title: Selling Skills
+description: How to publish skills, set prices, and receive payouts
+---
+
+## Becoming a Seller
+
+### Stripe Connect Onboarding
+
+Before receiving payouts, complete Stripe Connect onboarding:
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/sellers/connect" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+This returns an onboarding URL. Complete the Stripe form to enable payouts.
+
+### Check Earnings
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/sellers/earnings"
+```
+
+Returns total earnings and sale count.
+
+## Publishing a Skill
+
+### 1. Prepare Your Skill
+
+Create a directory with a `SKILL.md` file containing YAML frontmatter:
+
+```yaml
+---
+title: My Awesome Skill
+description: A skill that does amazing things
+category: development
+type: skill
+price_cents: 500
+platforms:
+  - code
+  - cowork
+---
+
+# My Awesome Skill
+
+Instructions for Claude when using this skill...
+```
+
+### 2. Login and Publish
+
+```bash
+ap login
+ap publish ./my-skill
+```
+
+The CLI:
+1. Packages your directory as a ZIP
+2. Creates the skill record via `POST /v1/skills`
+3. Uploads the package via `POST /v1/skills/{slug}/upload`
+
+### 3. Security Review
+
+Every submission passes through the security pipeline automatically:
+
+1. **Static validation** -- File type checks, dangerous pattern scanning
+2. **VirusTotal scan** -- Malware detection
+3. **AI security review** -- Semantic analysis for injection, auth flaws, data exposure
+4. **Agent-specific checks** (for agents) -- Tool access audit, instruction analysis
+
+Outcomes:
+- **Pass** -- Listed immediately
+- **Warn** -- Listed with a warning badge
+- **Block** -- Rejected with detailed findings
+
+## Pricing
+
+- Set `price_cents: 0` for free skills
+- Minimum pricing and currency details at [agentpowers.ai](https://agentpowers.ai)
+- AgentPowers takes a 10% platform fee; you receive 90% via Stripe Connect
+
+## ClawHub Claims
+
+If you authored a skill on ClawHub (the free marketplace), you can claim ownership:
+
+```bash
+ap claim my-clawhub-skill
+```
+
+Claims are verified against your GitHub account. High-confidence claims are auto-approved; borderline cases go to admin review.

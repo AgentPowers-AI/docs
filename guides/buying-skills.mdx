@@ -1,0 +1,97 @@
+---
+title: Buying Skills
+description: How to discover, purchase, and install skills from the marketplace
+---
+
+## Browsing the Marketplace
+
+### Search
+
+Find skills by keyword:
+
+```bash
+ap search "python testing"
+```
+
+Or via the API:
+
+```bash
+curl "https://api.agentpowers.ai/v1/search?q=python+testing"
+```
+
+### Filter & Sort
+
+The `GET /v1/skills` endpoint supports filtering and sorting:
+
+| Parameter | Values | Description |
+|-----------|--------|-------------|
+| `category` | Any category slug | Filter by category |
+| `type` | `skill`, `agent` | Filter by type |
+| `sort` | `newest`, `price_asc`, `price_desc`, `downloads` | Sort order |
+| `price_filter` | `free`, `paid` | Filter by price |
+| `security_status` | `pass`, `warn` | Filter by security status |
+
+```bash
+curl "https://api.agentpowers.ai/v1/skills?sort=downloads&price_filter=free&type=skill"
+```
+
+### Categories
+
+Browse by category:
+
+```bash
+curl "https://api.agentpowers.ai/v1/categories"
+```
+
+## Installing Free Skills
+
+Free skills require no authentication:
+
+```bash
+ap install skill-slug
+```
+
+The CLI downloads and extracts the package to `~/.claude/skills/skill-slug/`.
+
+## Purchasing Paid Skills
+
+1. Run `ap install paid-skill-slug`
+2. The CLI opens Stripe Checkout in your browser
+3. Complete payment
+4. The skill installs automatically
+
+### License Codes
+
+Each purchase generates a license code (`XXXX-XXXX-XXXX` format). Use it to install on another machine:
+
+```bash
+ap install paid-skill --license ABCD-EFGH-IJKL
+```
+
+Or redeem via the API:
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/purchases/redeem" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"license_code": "ABCD-EFGH-IJKL"}'
+```
+
+## Checking Purchases
+
+View your purchase history:
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/purchases"
+```
+
+## ZIP Downloads (claude.ai Web)
+
+For claude.ai web users who cannot use the CLI, skills are available as ZIP downloads:
+
+```
+GET /v1/skills/{slug}/download/zip
+```
+
+This returns the package as a ZIP file with `Content-Disposition: attachment`.

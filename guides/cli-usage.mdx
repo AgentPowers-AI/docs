@@ -1,0 +1,102 @@
+---
+title: CLI Usage
+description: Complete reference for the `ap` command-line tool
+---
+
+## Installation
+
+```bash
+pip install agentpowers
+```
+
+Verify the installation:
+
+```bash
+ap --version
+```
+
+## Authentication
+
+```bash
+ap login     # Opens browser for OAuth sign-in
+ap whoami    # Check current session
+ap logout    # Clear stored token
+```
+
+Tokens are stored at `~/.agentpowers/auth.json` with restricted permissions (0600).
+
+## Searching
+
+```bash
+ap search "code review"
+```
+
+Returns a table with columns: Name, Price, Security, Downloads.
+
+## Installing Skills
+
+### Free Skills
+
+```bash
+ap install my-awesome-skill
+```
+
+Downloads and extracts to `~/.claude/skills/my-awesome-skill/`.
+
+### Paid Skills
+
+```bash
+ap install premium-agent
+```
+
+Opens Stripe Checkout in your browser. After payment, the skill installs automatically.
+
+### License Redemption
+
+Use a license code to install on another machine:
+
+```bash
+ap install premium-agent --license XXXX-XXXX-XXXX
+```
+
+## Publishing
+
+### 1. Create Your Skill
+
+```
+my-skill/
+├── SKILL.md      # Required: frontmatter with title, description, price
+└── ...            # Your skill files
+```
+
+### 2. Publish
+
+```bash
+ap login
+ap publish ./my-skill
+```
+
+The CLI packages your directory as a ZIP, creates the skill record, and uploads the package. Your skill enters the security review pipeline automatically.
+
+## ClawHub Claims
+
+If you authored a skill on ClawHub, claim ownership:
+
+```bash
+ap claim my-clawhub-skill
+```
+
+Claims are verified against your GitHub account.
+
+## Command Reference
+
+| Command | Description |
+|---------|-------------|
+| `ap login` | Authenticate via browser OAuth |
+| `ap logout` | Clear stored credentials |
+| `ap whoami` | Show current user |
+| `ap search <query>` | Search the marketplace |
+| `ap install <slug>` | Install a skill |
+| `ap install <slug> --license <code>` | Install with license code |
+| `ap publish <path>` | Publish a skill directory |
+| `ap claim <slug>` | Claim a ClawHub skill |
