@@ -67,6 +67,25 @@ Most submissions complete the full pipeline within minutes. Complex packages or 
 
 If your submission is blocked and you believe the finding is a false positive, update your package to address the findings and resubmit. Each resubmission goes through the full pipeline again.
 
+## External Skills (ClawHub & More)
+
+External skills from registries like ClawHub go through the same full security pipeline. The difference is timing:
+
+- **Native skills** — scanned at publish time, before they appear in the marketplace
+- **External skills** — scanned at install time, with results cached by content hash
+
+### Scan Cache
+
+The first user to install a specific version of an external skill triggers the full scan. The result is cached by SHA-256 content hash. Every subsequent user installing the same version gets instant results.
+
+If the author re-uploads a skill (changing its files), the hash changes, the cache misses, and a fresh scan runs automatically.
+
+### Version Pinning
+
+Installed skills are pinned by content hash in `~/.agentpowers/pins.json`. Run `ap verify` to check all installed skills against their pins and detect tampering or unauthorized updates.
+
+See the [External Skills guide](/guides/external-skills) for full details.
+
 ## For Buyers
 
 ### Reading Security Status

@@ -28,7 +28,8 @@
               "guides/selling-skills",
               "guides/cli-usage",
               "guides/plugin-usage",
-              "guides/security-pipeline"
+              "guides/security-pipeline",
+              "guides/external-skills"
             ]
           }
         ]

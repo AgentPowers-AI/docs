@@ -1,0 +1,83 @@
+---
+title: External Skills (ClawHub & More)
+description: How AgentPowers integrates external skill registries with full security scanning
+---
+
+## Overview
+
+AgentPowers aggregates skills from external registries alongside its own native catalog. When you search, you see two sections: **AgentPowers** skills first, then skills from each external source (starting with **ClawHub**).
+
+External skills are free, open-source skills hosted on their original registry. AgentPowers proxies the search, handles installation, and runs its full security pipeline before any external skill reaches your machine.
+
+## How It Works
+
+### Searching
+
+When you search for a skill, AgentPowers queries its own database and all registered external sources in parallel. Results come back in clearly labeled sections:
+
+```bash
+ap search "postgres backup"
+```
+
+```text
+── AgentPowers ──────────────────────────────
+  pg-backup-pro       $5.00    ✅ pass
+
+── ClawHub ──────────────────────────────────
+  postgres-backup     Free     ✅ pass    ★ 4.7  (234 installs)
+  pg-dumper           Free     ⚠️ warn    ★ 3.2  (89 installs)
+  db-snapshot         Free     —  unscanned
+```
+
+- **pass/warn** — AgentPowers has scanned this skill version before
+- **unscanned** — No one has installed this version through AgentPowers yet; it will be scanned on first install
+
+### Installing
+
+External skills go through a sandboxed install + security scan flow:
+
+1. The CLI downloads the skill into a temporary sandbox directory
+2. File contents are hashed (SHA-256)
+3. AgentPowers checks its scan cache for that hash
+4. **Cache hit** — the cached security result is returned instantly
+5. **Cache miss** — the full security pipeline runs (static validation, VirusTotal, AI review, agent checks), then caches the result
+6. **Pass or warn** — files move to `~/.claude/skills/` and a pin is recorded
+7. **Block** — findings are displayed and the skill is not installed
+
+### Version Pinning
+
+Every installed skill is pinned by its content hash in `~/.agentpowers/pins.json`. This protects against supply chain attacks:
+
+- If an author re-uploads a skill (files change), the hash changes
+- On update, AgentPowers detects the mismatch and re-scans before applying
+- Run `ap verify` to check all installed skills against their recorded hashes
+
+## Security
+
+External skills receive the same security treatment as native AgentPowers skills:
+
+| Check | Description |
+|-------|-------------|
+| Static validation | File type checks, dangerous pattern scanning |
+| VirusTotal | Malware detection across 70+ engines |
+| AI security review | Semantic analysis for injection, auth flaws, data exposure |
+| Agent-specific checks | Tool audit, instruction analysis, trust scoring |
+
+The only difference: native skills are scanned at publish time. External skills are scanned at install time (and cached for subsequent users).
+
+## Supported Sources
+
+| Source | Status | Skills |
+|--------|--------|--------|
+| **ClawHub** | Active | Community skills for Claude Code |
+| More coming | Planned | Additional registries in the future |
+
+## For Developers
+
+### API
+
+Search results include a `source` field on each item. External items include `source_url`, `source_security`, `source_rating`, and `source_installs` from the original registry, plus `ap_security_status` and `ap_scan_hash` from our scan cache.
+
+### CLI
+
+The `ap install` command automatically detects external skills by their `source` field and routes through the sandbox + scan flow. No special flags needed.
