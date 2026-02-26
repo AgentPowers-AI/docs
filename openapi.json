@@ -1522,6 +1522,173 @@
           }
         }
       }
+    },
+    "/v1/security/check/{content_hash}": {
+      "get": {
+        "tags": [
+          "security"
+        ],
+        "summary": "Check Scan Cache",
+        "description": "Check if a content hash has been scanned. Returns cached scan result or 404 if not found.",
+        "operationId": "check_scan_cache_v1_security_check__content_hash__get",
+        "parameters": [
+          {
+            "name": "content_hash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Content Hash"
+            },
+            "description": "SHA-256 content hash of the package"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content_hash": {
+                      "type": "string"
+                    },
+                    "security_status": {
+                      "type": "string",
+                      "enum": [
+                        "pass",
+                        "warn",
+                        "block"
+                      ]
+                    },
+                    "security_score": {
+                      "type": "integer"
+                    },
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No cached scan for this hash"
+          }
+        }
+      }
+    },
+    "/v1/security/scan-package": {
+      "post": {
+        "tags": [
+          "security"
+        ],
+        "summary": "Scan External Package",
+        "description": "Upload an external skill package for security scanning. Runs the full security pipeline, caches the result by content hash, and returns the verdict.",
+        "operationId": "scan_external_package_v1_security_scan_package_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content_hash": {
+                    "type": "string",
+                    "title": "Content Hash",
+                    "description": "SHA-256 hash of the package content"
+                  },
+                  "source": {
+                    "type": "string",
+                    "title": "Source",
+                    "description": "Source registry (e.g. 'clawhub')"
+                  },
+                  "source_slug": {
+                    "type": "string",
+                    "title": "Source Slug",
+                    "description": "Skill identifier in the source registry"
+                  },
+                  "source_version": {
+                    "type": "string",
+                    "title": "Source Version",
+                    "description": "Version identifier from the source registry (optional)"
+                  },
+                  "skill_type": {
+                    "type": "string",
+                    "title": "Skill Type",
+                    "default": "skill",
+                    "enum": [
+                      "skill",
+                      "agent"
+                    ]
+                  },
+                  "package": {
+                    "type": "string",
+                    "format": "binary",
+                    "title": "Package",
+                    "description": "ZIP or TAR.GZ package file"
+                  }
+                },
+                "required": [
+                  "content_hash",
+                  "source",
+                  "source_slug",
+                  "package"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content_hash": {
+                      "type": "string"
+                    },
+                    "security_status": {
+                      "type": "string",
+                      "enum": [
+                        "pass",
+                        "warn",
+                        "block"
+                      ]
+                    },
+                    "security_score": {
+                      "type": "integer"
+                    },
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - authentication required"
+          },
+          "422": {
+            "description": "Validation Error"
+          }
+        }
+      }
     }
   },
   "components": {
