@@ -88,6 +88,16 @@ ap claim my-clawhub-skill
 
 Claims are verified against your GitHub account.
 
+## Verifying Installed Skills
+
+External skills (from ClawHub and other sources) are pinned by content hash in `~/.agentpowers/pins.json`. This protects against supply chain attacks. To verify that all installed skills match their recorded pins:
+
+```bash
+ap verify
+```
+
+This checks each installed skill's current content hash against the recorded pin and alerts you to any mismatches.
+
 ## Command Reference
 
 | Command | Description |
@@ -100,3 +110,4 @@ Claims are verified against your GitHub account.
 | `ap install <slug> --license <code>` | Install with license code |
 | `ap publish <path>` | Publish a skill directory |
 | `ap claim <slug>` | Claim a ClawHub skill |
+| `ap verify` | Verify installed skills against content hash pins |

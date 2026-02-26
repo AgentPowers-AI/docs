@@ -76,8 +76,55 @@ The only difference: native skills are scanned at publish time. External skills 
 
 ### API
 
-Search results include a `source` field on each item. External items include `source_url`, `source_security`, `source_rating`, and `source_installs` from the original registry, plus `ap_security_status` and `ap_scan_hash` from our scan cache.
+The API provides several endpoints for working with external skills and scan results:
+
+**Search Results**
+
+```bash
+GET /v1/search?q=postgres&type=skill
+```
+
+Returns a sectioned catalog with external items including:
+
+- `source` — "agentpowers", "clawhub", etc.
+- `source_url` — Link to the original registry entry
+- `source_security` — Security status from the original source
+- `source_rating` — Community rating (if available)
+- `source_installs` — Download count from the original source
+- `ap_security_status` — AgentPowers scan result ("pass", "warn", or "block")
+- `ap_scan_hash` — SHA-256 content hash of the scanned version
+
+**Scan Cache Lookup**
+
+Check if a specific content hash has been scanned:
+
+```bash
+GET /v1/security/check/{content_hash}
+```
+
+Returns the cached security result instantly if available, or indicates no cached result.
+
+**Triggering a Security Scan**
+
+For advanced use cases, initiate a security scan on a package:
+
+```bash
+POST /v1/security/scan-package
+Content-Type: application/octet-stream
+
+[binary package data]
+```
+
+Returns the security scan result (pass/warn/block) with detailed findings.
 
 ### CLI
 
 The `ap install` command automatically detects external skills by their `source` field and routes through the sandbox + scan flow. No special flags needed.
+
+The `ap verify` command checks all installed skills for integrity:
+
+```bash
+ap verify
+```
+
+This compares each skill's current content hash against its recorded pin in `~/.agentpowers/pins.json`.
