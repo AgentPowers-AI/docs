@@ -78,6 +78,30 @@ ap publish ./my-skill
 
 The CLI packages your directory as a ZIP, creates the skill record, and uploads the package. Your skill enters the security review pipeline automatically.
 
+## Scanning External Skills
+
+Preview a skill's security status without installing it:
+
+```bash
+ap scan ontology --source clawhub
+```
+
+This downloads the skill to a temporary sandbox, uploads it for a full security scan, displays the results, and cleans up. Nothing is installed.
+
+If the source is omitted, the CLI auto-detects it:
+
+```bash
+ap scan ontology
+```
+
+## Uninstalling Skills
+
+```bash
+ap uninstall my-skill
+```
+
+Removes the skill from `~/.claude/skills/` (or `~/.claude/agents/` for agents).
+
 ## ClawHub Claims
 
 If you authored a skill on ClawHub, claim ownership:
@@ -109,5 +133,7 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap install <slug>` | Install a skill |
 | `ap install <slug> --license <code>` | Install with license code |
 | `ap publish <path>` | Publish a skill directory |
+| `ap scan <slug>` | Scan an external skill without installing |
+| `ap uninstall <slug>` | Remove an installed skill |
 | `ap claim <slug>` | Claim a ClawHub skill |
 | `ap verify` | Verify installed skills against content hash pins |

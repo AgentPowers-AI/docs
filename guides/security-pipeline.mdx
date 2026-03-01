@@ -24,15 +24,18 @@ The package is submitted to VirusTotal for malware detection:
 - Scanned against 70+ antivirus engines
 - Results checked for any positive detections
 - Known-clean files are cached to avoid redundant scans
+- Uses polling with exponential backoff (up to ~3 minutes) to handle analysis queues
 
 ### 3. AI Security Review
 
-An AI-powered semantic analysis checks for:
+An AI-powered semantic analysis using Claude checks for:
 
 - **Prompt injection** — Attempts to override Claude's instructions
 - **Authentication flaws** — Improper credential handling
 - **Data exposure** — Leaking user data or API keys
 - **Privilege escalation** — Requesting unnecessary permissions
+
+The AI review uses a model fallback chain — if the primary model is unavailable, it automatically switches to a backup model.
 
 ### 4. Agent-Specific Checks
 
@@ -49,6 +52,16 @@ Submissions of type `agent` receive additional scrutiny:
 | **Pass** | Listed immediately in the marketplace |
 | **Warn** | Listed with a warning badge visible to buyers |
 | **Block** | Rejected — the creator receives detailed findings |
+
+## Skipped Layers
+
+If a scan layer cannot run (e.g., the VirusTotal API is temporarily unavailable), it is marked as **skipped** rather than failed. Skipped layers:
+
+- Do not count against the skill's score
+- Are shown as `--` in scan results
+- Do not prevent listing — only active findings cause a warn or block
+
+This ensures infrastructure issues never block legitimate submissions.
 
 ## Timing
 

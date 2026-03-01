@@ -121,7 +121,15 @@ Returns the security scan result (pass/warn/block) with detailed findings.
 
 The `ap install` command automatically detects external skills by their `source` field and routes through the sandbox + scan flow. No special flags needed.
 
-The `ap verify` command checks all installed skills for integrity:
+**Preview before installing** — Use `ap scan` to run the full security pipeline without installing:
+
+```bash
+ap scan ontology --source clawhub
+```
+
+This downloads to a temporary sandbox, scans, displays results, and cleans up. Nothing is installed.
+
+**Verify integrity** — The `ap verify` command checks all installed skills against their recorded content hashes:
 
 ```bash
 ap verify
