@@ -46,6 +46,46 @@
         }
       }
     },
+    "/v1/auth/cli-token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Exchange For Cli Token",
+        "description": "Exchange a Clerk JWT for a long-lived CLI token.",
+        "operationId": "exchange_for_cli_token_v1_auth_cli_token_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/revoke-cli-token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Revoke Current Cli Token",
+        "description": "Revoke the CLI token used in this request. Only accepts CLI tokens.",
+        "operationId": "revoke_current_cli_token_v1_auth_revoke_cli_token_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/skills": {
       "get": {
         "tags": [
@@ -889,7 +929,7 @@
           "search"
         ],
         "summary": "Search Marketplace",
-        "description": "Full-text search across skills and agents.",
+        "description": "Full-text search across skills and agents. Returns sectioned results.",
         "operationId": "search_marketplace_v1_search_get",
         "parameters": [
           {
@@ -932,9 +972,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SearchResponse"
-                }
+                "schema": {}
               }
             }
           },
@@ -1503,6 +1541,144 @@
         }
       }
     },
+    "/v1/security/check/{content_hash}": {
+      "get": {
+        "tags": [
+          "security"
+        ],
+        "summary": "Check Scan Cache",
+        "description": "Check scan cache for a content hash. Returns cached result or 404.",
+        "operationId": "check_scan_cache_v1_security_check__content_hash__get",
+        "parameters": [
+          {
+            "name": "content_hash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Content Hash"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/security/scan-package": {
+      "post": {
+        "tags": [
+          "security"
+        ],
+        "summary": "Scan External Package",
+        "description": "Upload an external skill package for security scanning.\n\nRuns the full security pipeline, caches the result by content hash,\nand returns the verdict.\n\nSECURITY: The server computes the content hash from the uploaded\nZIP contents. The client-supplied content_hash field is ignored.\nThis prevents hash-spoofing attacks where a client uploads benign\ncontent with a forged hash to poison the scan cache.",
+        "operationId": "scan_external_package_v1_security_scan_package_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_scan_external_package_v1_security_scan_package_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/detail/{slug}": {
+      "get": {
+        "tags": [
+          "detail"
+        ],
+        "summary": "Get Detail",
+        "description": "Get full detail for a skill by slug. Tries native DB first, then external sources.",
+        "operationId": "get_detail_v1_detail__slug__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -1519,173 +1695,6 @@
                 "schema": {}
               }
             }
-          }
-        }
-      }
-    },
-    "/v1/security/check/{content_hash}": {
-      "get": {
-        "tags": [
-          "security"
-        ],
-        "summary": "Check Scan Cache",
-        "description": "Check if a content hash has been scanned. Returns cached scan result or 404 if not found.",
-        "operationId": "check_scan_cache_v1_security_check__content_hash__get",
-        "parameters": [
-          {
-            "name": "content_hash",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Content Hash"
-            },
-            "description": "SHA-256 content hash of the package"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "content_hash": {
-                      "type": "string"
-                    },
-                    "security_status": {
-                      "type": "string",
-                      "enum": [
-                        "pass",
-                        "warn",
-                        "block"
-                      ]
-                    },
-                    "security_score": {
-                      "type": "integer"
-                    },
-                    "findings": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "No cached scan for this hash"
-          }
-        }
-      }
-    },
-    "/v1/security/scan-package": {
-      "post": {
-        "tags": [
-          "security"
-        ],
-        "summary": "Scan External Package",
-        "description": "Upload an external skill package for security scanning. Runs the full security pipeline, caches the result by content hash, and returns the verdict.",
-        "operationId": "scan_external_package_v1_security_scan_package_post",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "content_hash": {
-                    "type": "string",
-                    "title": "Content Hash",
-                    "description": "SHA-256 hash of the package content"
-                  },
-                  "source": {
-                    "type": "string",
-                    "title": "Source",
-                    "description": "Source registry (e.g. 'clawhub')"
-                  },
-                  "source_slug": {
-                    "type": "string",
-                    "title": "Source Slug",
-                    "description": "Skill identifier in the source registry"
-                  },
-                  "source_version": {
-                    "type": "string",
-                    "title": "Source Version",
-                    "description": "Version identifier from the source registry (optional)"
-                  },
-                  "skill_type": {
-                    "type": "string",
-                    "title": "Skill Type",
-                    "default": "skill",
-                    "enum": [
-                      "skill",
-                      "agent"
-                    ]
-                  },
-                  "package": {
-                    "type": "string",
-                    "format": "binary",
-                    "title": "Package",
-                    "description": "ZIP or TAR.GZ package file"
-                  }
-                },
-                "required": [
-                  "content_hash",
-                  "source",
-                  "source_slug",
-                  "package"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "content_hash": {
-                      "type": "string"
-                    },
-                    "security_status": {
-                      "type": "string",
-                      "enum": [
-                        "pass",
-                        "warn",
-                        "block"
-                      ]
-                    },
-                    "security_score": {
-                      "type": "integer"
-                    },
-                    "findings": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - authentication required"
-          },
-          "422": {
-            "description": "Validation Error"
           }
         }
       }
@@ -1720,6 +1729,44 @@
         },
         "type": "object",
         "title": "AuthorSummary"
+      },
+      "Body_scan_external_package_v1_security_scan_package_post": {
+        "properties": {
+          "content_hash": {
+            "type": "string",
+            "title": "Content Hash",
+            "default": ""
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "source_slug": {
+            "type": "string",
+            "title": "Source Slug"
+          },
+          "source_version": {
+            "type": "string",
+            "title": "Source Version"
+          },
+          "skill_type": {
+            "type": "string",
+            "title": "Skill Type",
+            "default": "skill"
+          },
+          "package": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "Package"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source",
+          "source_slug",
+          "package"
+        ],
+        "title": "Body_scan_external_package_v1_security_scan_package_post"
       },
       "Body_upload_skill_package_v1_skills__slug__upload_post": {
         "properties": {
@@ -2101,42 +2148,6 @@
           "message"
         ],
         "title": "RedeemResponse"
-      },
-      "SearchResponse": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/SkillSummary"
-            },
-            "type": "array",
-            "title": "Items"
-          },
-          "query": {
-            "type": "string",
-            "title": "Query"
-          },
-          "total": {
-            "type": "integer",
-            "title": "Total"
-          },
-          "limit": {
-            "type": "integer",
-            "title": "Limit"
-          },
-          "offset": {
-            "type": "integer",
-            "title": "Offset"
-          }
-        },
-        "type": "object",
-        "required": [
-          "items",
-          "query",
-          "total",
-          "limit",
-          "offset"
-        ],
-        "title": "SearchResponse"
       },
       "SecurityResultsResponse": {
         "properties": {
@@ -2535,6 +2546,10 @@
             "type": "string",
             "title": "Currency"
           },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
           "security_status": {
             "type": "string",
             "title": "Security Status"
@@ -2563,6 +2578,7 @@
           "type",
           "price_cents",
           "currency",
+          "version",
           "security_status",
           "download_count"
         ],

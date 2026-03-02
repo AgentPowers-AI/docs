@@ -5,7 +5,7 @@ description: How AgentPowers vets every skill and agent submission
 
 ## Overview
 
-Every skill and agent submission passes through a multi-layer security pipeline before listing. No manual review is required for most submissions — the pipeline runs automatically.
+Every skill and agent submission passes through a multi-layer security pipeline before listing. No manual review is required for most submissions -- the pipeline runs automatically.
 
 ## Pipeline Stages
 
@@ -13,9 +13,9 @@ Every skill and agent submission passes through a multi-layer security pipeline 
 
 The first layer checks the submission package itself:
 
-- **File type verification** — Only allowed file types pass through
-- **Dangerous pattern scanning** — Regex checks for shell commands, environment variable harvesting, obfuscation techniques
-- **Size limits** — Packages must stay within size constraints
+- **File type verification** -- Only allowed file types pass through
+- **Dangerous pattern scanning** -- Regex checks for shell commands, environment variable harvesting, obfuscation techniques
+- **Size limits** -- Packages must stay within size constraints
 
 ### 2. VirusTotal Scan
 
@@ -24,26 +24,66 @@ The package is submitted to VirusTotal for malware detection:
 - Scanned against 70+ antivirus engines
 - Results checked for any positive detections
 - Known-clean files are cached to avoid redundant scans
-- Uses polling with exponential backoff (up to ~3 minutes) to handle analysis queues
+- Uses polling with linear backoff (up to ~3 minutes) to handle analysis queues
 
 ### 3. AI Security Review
 
 An AI-powered semantic analysis using Claude checks for:
 
-- **Prompt injection** — Attempts to override Claude's instructions
-- **Authentication flaws** — Improper credential handling
-- **Data exposure** — Leaking user data or API keys
-- **Privilege escalation** — Requesting unnecessary permissions
+- **Prompt injection** -- Attempts to override Claude's instructions
+- **Authentication flaws** -- Improper credential handling
+- **Data exposure** -- Leaking user data or API keys
+- **Privilege escalation** -- Requesting unnecessary permissions
 
-The AI review uses a model fallback chain — if the primary model is unavailable, it automatically switches to a backup model.
+The AI review uses a model fallback chain -- if the primary model is unavailable, it automatically switches to a backup model.
 
 ### 4. Agent-Specific Checks
 
 Submissions of type `agent` receive additional scrutiny:
 
-- **Tool access audit** — Which tools does the agent request?
-- **Instruction analysis** — Are instructions appropriate for the declared purpose?
-- **Trust level scoring** — Overall risk assessment based on capabilities requested
+- **Tool access audit** -- Which tools does the agent request?
+- **Instruction analysis** -- Are instructions appropriate for the declared purpose?
+- **Trust level scoring** -- Overall risk assessment based on capabilities requested
+
+## Scan Response
+
+The scan result includes a `layers` array with per-layer details:
+
+```json
+{
+  "status": "warn",
+  "score": 4,
+  "findings": [...],
+  "layers": [
+    {
+      "name": "static_validation",
+      "status": "pass",
+      "score": 0,
+      "findings": []
+    },
+    {
+      "name": "virustotal",
+      "status": "skip",
+      "score": null,
+      "findings": []
+    },
+    {
+      "name": "ai_review",
+      "status": "warn",
+      "score": 4,
+      "findings": [...]
+    }
+  ]
+}
+```
+
+### Score Semantics
+
+- **`score: 0`** -- The layer ran and found nothing (genuine pass)
+- **`score: null`** -- The layer could not run (skipped, e.g., API unavailable)
+- **`status: "skip"`** -- Displayed as `--` in CLI output; does not count against the skill
+
+The pipeline's aggregate score uses `max()` across all layers, filtering out `null` scores. Skipped layers never penalize a submission.
 
 ## Outcomes
 
@@ -51,17 +91,7 @@ Submissions of type `agent` receive additional scrutiny:
 |--------|--------|
 | **Pass** | Listed immediately in the marketplace |
 | **Warn** | Listed with a warning badge visible to buyers |
-| **Block** | Rejected — the creator receives detailed findings |
-
-## Skipped Layers
-
-If a scan layer cannot run (e.g., the VirusTotal API is temporarily unavailable), it is marked as **skipped** rather than failed. Skipped layers:
-
-- Do not count against the skill's score
-- Are shown as `--` in scan results
-- Do not prevent listing — only active findings cause a warn or block
-
-This ensures infrastructure issues never block legitimate submissions.
+| **Block** | Rejected -- the creator receives detailed findings |
 
 ## Timing
 
@@ -80,12 +110,12 @@ Most submissions complete the full pipeline within minutes. Complex packages or 
 
 If your submission is blocked and you believe the finding is a false positive, update your package to address the findings and resubmit. Each resubmission goes through the full pipeline again.
 
-## External Skills (ClawHub & More)
+## External Skills (ClawHub and More)
 
 External skills from registries like ClawHub go through the same full security pipeline. The difference is timing:
 
-- **Native skills** — scanned at publish time, before they appear in the marketplace
-- **External skills** — scanned at install time, with results cached by content hash
+- **Native skills** -- scanned at publish time, before they appear in the marketplace
+- **External skills** -- scanned at install time, with results cached by content hash
 
 ### Scan Cache
 
@@ -105,18 +135,11 @@ See the [External Skills guide](/guides/external-skills) for full details.
 
 Every skill in the marketplace displays its security status:
 
-- **Pass** — No issues detected
-- **Warn** — Minor concerns flagged; review the badge details before installing
+- **Pass** -- No issues detected
+- **Warn** -- Minor concerns flagged; review the badge details before installing
 
 Skills with a **Block** status are never listed.
 
 ### Reporting Concerns
 
-If you discover a security issue with an installed skill, report it through the API:
-
-```bash
-curl -X POST "https://api.agentpowers.ai/v1/admin/report" \
-  -H "Authorization: Bearer TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"skill_slug": "suspicious-skill", "reason": "Description of concern"}'
-```
+If you discover a security issue with an installed skill, contact support at [support@agentpowers.ai](mailto:support@agentpowers.ai) with the skill slug and a description of the concern.

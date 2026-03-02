@@ -19,7 +19,55 @@ Or via the API:
 curl "https://api.agentpowers.ai/v1/search?q=python+testing"
 ```
 
-### Filter & Sort
+The search endpoint returns **sectioned results** -- AgentPowers native skills first, then external sources (like ClawHub):
+
+```json
+{
+  "agentpowers": {
+    "items": [
+      {
+        "slug": "py-test-pro",
+        "title": "Python Test Pro",
+        "price_cents": 500,
+        "security_status": "pass",
+        "download_count": 120
+      }
+    ],
+    "total": 1,
+    "limit": 20,
+    "offset": 0
+  },
+  "clawhub": {
+    "items": [
+      {
+        "slug": "pytest-helper",
+        "title": "Pytest Helper",
+        "source": "clawhub",
+        "source_url": "https://clawhub.ai/skills/pytest-helper",
+        "source_installs": 89,
+        "ap_security_status": "pass"
+      }
+    ],
+    "total": 1
+  }
+}
+```
+
+### Skill Detail
+
+Get full details for any skill (native or external) via the unified detail endpoint:
+
+```bash
+curl "https://api.agentpowers.ai/v1/detail/my-skill"
+```
+
+Add `?source=clawhub` to target a specific source:
+
+```bash
+curl "https://api.agentpowers.ai/v1/detail/my-skill?source=clawhub"
+```
+
+### Filter and Sort
 
 The `GET /v1/skills` endpoint supports filtering and sorting:
 
@@ -60,6 +108,16 @@ The CLI downloads and extracts the package to `~/.claude/skills/skill-slug/`.
 3. Complete payment
 4. The skill installs automatically
 
+### Post-Checkout Confirmation
+
+After Stripe redirects back, the purchase is confirmed via:
+
+```text
+GET /v1/purchases/confirm?session_id=cs_live_...
+```
+
+This endpoint verifies the Stripe session and returns the purchase record with license code.
+
 ### License Codes
 
 Each purchase generates a license code (`XXXX-XXXX-XXXX` format). Use it to install on another machine:
@@ -90,7 +148,7 @@ curl -H "Authorization: Bearer TOKEN" \
 
 For claude.ai web users who cannot use the CLI, skills are available as ZIP downloads:
 
-```
+```text
 GET /v1/skills/{slug}/download/zip
 ```
 

@@ -56,6 +56,7 @@ ap publish ./my-skill
 ```
 
 The CLI:
+
 1. Packages your directory as a ZIP
 2. Creates the skill record via `POST /v1/skills`
 3. Uploads the package via `POST /v1/skills/{slug}/upload`
@@ -70,6 +71,7 @@ Every submission passes through the security pipeline automatically:
 4. **Agent-specific checks** (for agents) -- Tool access audit, instruction analysis
 
 Outcomes:
+
 - **Pass** -- Listed immediately
 - **Warn** -- Listed with a warning badge
 - **Block** -- Rejected with detailed findings
@@ -77,8 +79,8 @@ Outcomes:
 ## Pricing
 
 - Set `price_cents: 0` for free skills
-- Minimum pricing and currency details at [agentpowers.ai](https://agentpowers.ai)
-- AgentPowers takes a 10% platform fee; you receive 90% via Stripe Connect
+- **Minimum price for paid skills is $3.00** (`price_cents: 300`). Values between 1 and 299 are rejected
+- AgentPowers takes a **10% platform fee**; you receive 90% via Stripe Connect
 
 ## ClawHub Claims
 

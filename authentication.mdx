@@ -5,14 +5,18 @@ description: How authentication works in AgentPowers
 
 ## Overview
 
-AgentPowers uses [Clerk](https://clerk.com) for authentication. JWTs issued by Clerk are verified on every authenticated API request.
+AgentPowers uses [Clerk](https://clerk.com) for authentication. The API supports three types of Bearer tokens, checked in order:
+
+1. **CLI long-lived tokens** (`ap_cli_...`) -- 90-day opaque tokens for CLI/plugin use
+2. **Dev bypass tokens** (`dev_...`) -- Development mode only, never available in production
+3. **Clerk JWTs** -- Short-lived tokens issued by Clerk for web/frontend use
 
 ## API Authentication
 
 Include a Bearer token in the `Authorization` header:
 
 ```bash
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+curl -H "Authorization: Bearer YOUR_TOKEN" \
   https://api.agentpowers.ai/v1/purchases
 ```
 
@@ -24,11 +28,48 @@ The CLI handles authentication automatically:
 ap login
 ```
 
-This opens your browser for OAuth sign-in. After authenticating, the token is stored locally at `~/.agentpowers/auth.json` with restricted file permissions (0600).
+This opens your browser for OAuth sign-in via Clerk. After authenticating, the CLI exchanges the short-lived Clerk JWT for a **90-day CLI token** via `POST /v1/auth/cli-token`. The token is stored locally at `~/.agentpowers/auth.json` with restricted file permissions (0600).
 
 ```bash
 ap whoami    # Check current session
 ap logout    # Clear stored token
+```
+
+### CLI Token Lifecycle
+
+| Step | What happens |
+|------|-------------|
+| `ap login` | Browser OAuth via Clerk, then JWT exchanged for 90-day `ap_cli_` token |
+| API calls | CLI sends `Authorization: Bearer ap_cli_...` on every request |
+| `ap logout` | Token revoked server-side via `POST /v1/auth/revoke-cli-token`, local file deleted |
+| Token expiry | After 90 days, re-run `ap login` to get a new token |
+| New login | Creating a new CLI token automatically revokes the previous one |
+
+### Token Exchange Endpoint
+
+Exchange a Clerk JWT for a long-lived CLI token:
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/auth/cli-token" \
+  -H "Authorization: Bearer CLERK_JWT"
+```
+
+Returns:
+
+```json
+{
+  "token": "ap_cli_abc123...",
+  "expires_at": "2026-06-01T00:00:00Z"
+}
+```
+
+### Token Revocation Endpoint
+
+Revoke a CLI token (used during logout):
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/auth/revoke-cli-token" \
+  -H "Authorization: Bearer ap_cli_abc123..."
 ```
 
 ## Plugin Authentication
@@ -43,13 +84,18 @@ The MCP plugin shares the same auth token stored by the CLI at `~/.agentpowers/a
 | `GET /v1/skills/{slug}` | No |
 | `GET /v1/search` | No |
 | `GET /v1/categories` | No |
+| `GET /v1/detail/{slug}` | No |
 | `GET /v1/skills/{slug}/download` (free) | No |
 | `GET /v1/skills/{slug}/download` (paid) | Yes |
 | `POST /v1/skills` | Yes |
 | `POST /v1/checkout` | Yes |
 | `GET /v1/purchases` | Yes |
+| `GET /v1/purchases/confirm` | Yes |
 | `POST /v1/installations` | Yes |
 | `POST /v1/sellers/connect` | Yes |
+| `GET /v1/sellers/earnings` | Yes |
+| `POST /v1/auth/cli-token` | Yes (Clerk JWT) |
+| `POST /v1/auth/revoke-cli-token` | Yes (CLI token) |
 
 ## Rate Limits
 

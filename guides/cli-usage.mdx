@@ -23,7 +23,7 @@ ap whoami    # Check current session
 ap logout    # Clear stored token
 ```
 
-Tokens are stored at `~/.agentpowers/auth.json` with restricted permissions (0600).
+Tokens are stored at `~/.agentpowers/auth.json` with restricted permissions (0600). The CLI uses long-lived 90-day tokens (exchanged from Clerk JWTs) so you rarely need to re-login.
 
 ## Searching
 
@@ -31,7 +31,36 @@ Tokens are stored at `~/.agentpowers/auth.json` with restricted permissions (060
 ap search "code review"
 ```
 
-Returns a table with columns: Name, Price, Security, Downloads.
+Returns a unified table with columns: Slug, Title, Source, Type, Price, Security. Results are sectioned by source -- AgentPowers native skills appear first, followed by external sources like ClawHub. Install counts and star ratings are shown inline in the Title column when available.
+
+Options:
+
+```bash
+ap search "testing" --limit 10
+ap search "devops" --category development
+ap search "agent" --type agent
+```
+
+## Skill Detail
+
+View full details for any skill:
+
+```bash
+ap detail my-skill
+```
+
+Options:
+
+| Flag | Description |
+|------|-------------|
+| `--source`, `-s` | Target a specific source (e.g., `clawhub`) |
+| `--scan` | Download and run the full security pipeline, then display per-finding results |
+| `--type`, `-t` | Filter by type (`skill` or `agent`) |
+
+```bash
+ap detail ontology --source clawhub
+ap detail ontology --scan              # Deep security scan
+```
 
 ## Installing Skills
 
@@ -59,14 +88,24 @@ Use a license code to install on another machine:
 ap install premium-agent --license XXXX-XXXX-XXXX
 ```
 
+### External Skills
+
+Install skills from external sources like ClawHub:
+
+```bash
+ap install ontology --source clawhub
+```
+
+External skills are downloaded to a sandbox, hashed, scanned through the full security pipeline, and only installed if they pass. See the [External Skills guide](/guides/external-skills) for details.
+
 ## Publishing
 
 ### 1. Create Your Skill
 
-```
+```text
 my-skill/
-├── SKILL.md      # Required: frontmatter with title, description, price
-└── ...            # Your skill files
+  SKILL.md      # Required: frontmatter with title, description, price
+  ...            # Your skill files
 ```
 
 ### 2. Publish
@@ -129,9 +168,9 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap login` | Authenticate via browser OAuth |
 | `ap logout` | Clear stored credentials |
 | `ap whoami` | Show current user |
-| `ap search <query>` | Search the marketplace |
-| `ap install <slug>` | Install a skill |
-| `ap install <slug> --license <code>` | Install with license code |
+| `ap search <query>` | Search the marketplace (unified, sectioned results) |
+| `ap detail <slug>` | View skill details (`--source`, `--scan`, `--type` flags) |
+| `ap install <slug>` | Install a skill (`--license`, `--source` flags) |
 | `ap publish <path>` | Publish a skill directory |
 | `ap scan <slug>` | Scan an external skill without installing |
 | `ap uninstall <slug>` | Remove an installed skill |
