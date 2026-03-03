@@ -31,7 +31,7 @@ Tokens are stored at `~/.agentpowers/auth.json` with restricted permissions (060
 ap search "code review"
 ```
 
-Returns a unified table with columns: Slug, Title, Source, Type, Price, Security. Results are sectioned by source -- AgentPowers native skills appear first, followed by external sources like ClawHub. Install counts and star ratings are shown inline in the Title column when available.
+Returns a unified table with columns: Slug, Title, Source, Type, Price, Security, Installed. Results are sectioned by source -- AgentPowers native skills appear first, followed by external sources like ClawHub. Install counts and star ratings are shown inline in the Title column when available. The Installed column shows **Yes** (green), **Edited** (yellow for locally modified skills), or **No**.
 
 Options:
 
@@ -117,6 +117,32 @@ ap publish ./my-skill
 
 The CLI packages your directory as a ZIP, creates the skill record, and uploads the package. Your skill enters the security review pipeline automatically.
 
+### 3. Publish Updates
+
+Push new versions of an existing skill:
+
+```bash
+ap publish ./my-skill --bump patch       # Default: patch bump
+ap publish ./my-skill --bump minor       # Minor version bump
+ap publish ./my-skill --bump major       # Major version bump
+ap publish ./my-skill --version 2.0.0    # Explicit version
+ap publish ./my-skill --changelog "Bug fixes and performance improvements"
+```
+
+The `--bump` and `--version` flags are mutually exclusive. The previous version stays live while the new version undergoes security review.
+
+## Updating Installed Skills
+
+Keep installed skills up to date:
+
+```bash
+ap update                # Check all installed skills
+ap update my-skill       # Update a single skill
+ap update --force        # Skip confirmation prompt
+```
+
+Locally edited skills are skipped to avoid overwriting your changes. The `Installed` column in `ap search` shows **Edited** (yellow) for modified skills.
+
 ## Scanning External Skills
 
 Preview a skill's security status without installing it:
@@ -171,8 +197,10 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap search <query>` | Search the marketplace (unified, sectioned results) |
 | `ap detail <slug>` | View skill details (`--source`, `--scan`, `--type` flags) |
 | `ap install <slug>` | Install a skill (`--license`, `--source` flags) |
-| `ap publish <path>` | Publish a skill directory |
+| `ap publish <path>` | Publish or update a skill (`--bump`, `--version`, `--changelog` flags) |
+| `ap update [slug]` | Update installed skills to latest versions (`--force` flag) |
 | `ap scan <slug>` | Scan an external skill without installing |
 | `ap uninstall <slug>` | Remove an installed skill |
+| `ap unpublish <slug>` | Archive a published skill (hide from marketplace) |
 | `ap claim <slug>` | Claim a ClawHub skill |
 | `ap verify` | Verify installed skills against content hash pins |

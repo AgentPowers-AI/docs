@@ -61,7 +61,56 @@ The CLI:
 2. Creates the skill record via `POST /v1/skills`
 3. Uploads the package via `POST /v1/skills/{slug}/upload`
 
-### 3. Security Review
+Your skill starts at **v1.0.0**.
+
+### 3. Publishing Updates
+
+Already published? `ap publish` detects the existing skill and creates a new version:
+
+```bash
+ap publish ./my-skill --bump patch     # v1.0.0 → v1.0.1 (default)
+ap publish ./my-skill --bump minor     # v1.0.0 → v1.1.0
+ap publish ./my-skill --bump major     # v1.0.0 → v2.0.0
+```
+
+Or set an explicit version:
+
+```bash
+ap publish ./my-skill --version 2.0.0
+```
+
+Add a changelog message:
+
+```bash
+ap publish ./my-skill --bump minor --changelog "Added dark mode support"
+```
+
+**How it works:**
+
+1. The CLI detects the existing skill (POST returns 409)
+2. Sends a `PATCH /v1/skills/{slug}` to create a new version
+3. Uploads the updated package
+4. The new version enters the security pipeline while the **previous version stays live**
+
+**One pending version at a time.** If a version is still awaiting security review, you cannot publish another until it completes.
+
+You can also update metadata (title, description, category, price) without bumping the version -- just change the frontmatter and re-publish.
+
+### 4. Unpublishing
+
+Temporarily remove a skill from the marketplace:
+
+```bash
+ap unpublish my-skill
+```
+
+Archived skills are hidden from search and cannot be purchased, but existing buyers retain download access. To re-list:
+
+```bash
+ap republish my-skill
+```
+
+### 5. Security Review
 
 Every submission passes through the security pipeline automatically:
 

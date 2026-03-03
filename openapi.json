@@ -315,7 +315,7 @@
           "skills"
         ],
         "summary": "Update Skill",
-        "description": "Update an existing skill (new version).",
+        "description": "Update an existing skill \u2014 creates a new version.",
         "operationId": "update_skill_v1_skills__slug__patch",
         "parameters": [
           {
@@ -328,12 +328,24 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillUpdateRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SkillUpdateResponse"
+                }
               }
             }
           },
@@ -356,7 +368,7 @@
           "skills"
         ],
         "summary": "Upload Skill Package",
-        "description": "Upload a skill package file to R2 storage.\n\nOnly the skill author can upload packages. Max 100 MB.",
+        "description": "Upload a skill package file to R2 storage.\n\nOnly the skill author can upload packages. Max 100 MB.\nWhen version is specified, uploads to the version-specific storage key.",
         "operationId": "upload_skill_package_v1_skills__slug__upload_post",
         "parameters": [
           {
@@ -366,6 +378,22 @@
             "schema": {
               "type": "string",
               "title": "Slug"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
             }
           }
         ],
@@ -471,6 +499,92 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skills/{slug}/unpublish": {
+      "post": {
+        "tags": [
+          "skills"
+        ],
+        "summary": "Unpublish Skill",
+        "description": "Unpublish (archive) a skill. Owner-only. Reversible via republish.",
+        "operationId": "unpublish_skill_v1_skills__slug__unpublish_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillUnpublishResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skills/{slug}/republish": {
+      "post": {
+        "tags": [
+          "skills"
+        ],
+        "summary": "Republish Skill",
+        "description": "Republish a previously archived skill. Owner-only.",
+        "operationId": "republish_skill_v1_skills__slug__republish_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillUnpublishResponse"
+                }
               }
             }
           },
@@ -1461,7 +1575,7 @@
           "security"
         ],
         "summary": "Trigger Scan",
-        "description": "Trigger a security scan for a skill.\n\nOnly the skill author can trigger scans.",
+        "description": "Trigger a security scan for a skill.\n\nOnly the skill author can trigger scans. When version is specified,\nscans the version-specific package and promotes or blocks the version.",
         "operationId": "trigger_scan_v1_security_scan__slug__post",
         "parameters": [
           {
@@ -1471,6 +1585,22 @@
             "schema": {
               "type": "string",
               "title": "Slug"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
             }
           }
         ],
@@ -2339,6 +2469,17 @@
             ],
             "title": "Created At"
           },
+          "archived_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
           "author": {
             "anyOf": [
               {
@@ -2583,6 +2724,175 @@
           "download_count"
         ],
         "title": "SkillSummary"
+      },
+      "SkillUnpublishResponse": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "archived_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "message"
+        ],
+        "title": "SkillUnpublishResponse"
+      },
+      "SkillUpdateRequest": {
+        "properties": {
+          "bump": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(patch|minor|major)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bump"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500,
+                "minLength": 10
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "long_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Long Description"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 50,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "price_cents": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Cents"
+          },
+          "changelog": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changelog"
+          }
+        },
+        "type": "object",
+        "title": "SkillUpdateRequest"
+      },
+      "SkillUpdateResponse": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "previous_version": {
+            "type": "string",
+            "title": "Previous Version"
+          },
+          "new_version": {
+            "type": "string",
+            "title": "New Version"
+          },
+          "version_id": {
+            "type": "string",
+            "title": "Version Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "previous_version",
+          "new_version",
+          "version_id",
+          "status",
+          "message"
+        ],
+        "title": "SkillUpdateResponse"
       },
       "SkillUploadResponse": {
         "properties": {

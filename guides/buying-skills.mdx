@@ -144,6 +144,33 @@ curl -H "Authorization: Bearer TOKEN" \
   "https://api.agentpowers.ai/v1/purchases"
 ```
 
+## Updating Installed Skills
+
+When sellers publish new versions, update your installed skills:
+
+```bash
+ap update my-skill          # Update a single skill
+ap update                   # Check all installed skills for updates
+ap update --force           # Skip the confirmation prompt
+```
+
+The update command:
+
+1. Compares your installed version (from `~/.agentpowers/pins.json`) against the latest version on the API
+2. Downloads and installs the new version if one is available
+3. Updates the pin with the new version and content hash
+
+**Locally edited skills are protected.** If you've modified an installed skill's files, `ap update` detects the change via content hash and skips it to avoid overwriting your work. You'll see a yellow "locally edited" notice.
+
+**Paid skills update for free.** If you purchased a skill, all future versions are included -- no additional payment required.
+
+### Checking Edit Status
+
+The `ap search` command shows whether installed skills have been locally modified:
+
+- **Yes** (green) -- installed, unmodified
+- **Edited** (yellow) -- installed, locally modified (hash mismatch)
+
 ## ZIP Downloads (claude.ai Web)
 
 For claude.ai web users who cannot use the CLI, skills are available as ZIP downloads:
