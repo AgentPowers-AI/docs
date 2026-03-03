@@ -162,7 +162,16 @@ The update command works for **both native AgentPowers skills and external skill
 
 For external skills, updates go through the same sandboxed security pipeline as the initial install -- the new version is downloaded to a sandbox, scanned, and only installed if it passes.
 
-**Locally edited skills are protected.** If you've modified an installed skill's files, `ap update` detects the change via content hash and skips it to avoid overwriting your work. You'll see a yellow "locally edited" notice. This applies to both native and external skills.
+**Locally edited skills are protected.** If you've modified an installed skill's files, `ap update` detects the change via content hash and prompts before overwriting:
+
+```text
+my-skill has been locally edited.
+Update my-skill anyway? Local changes will be overwritten [y/N]:
+```
+
+The default is **No** -- pressing Enter skips the update. Use `--force` to bypass the prompt entirely. This applies to both native and external skills.
+
+When running `ap update` (all), each edited skill with an available update is prompted individually during the download phase, giving you per-skill control over which edits to keep.
 
 **Paid skills update for free.** If you purchased a skill, all future versions are included -- no additional payment required.
 

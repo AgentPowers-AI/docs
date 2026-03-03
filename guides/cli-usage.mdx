@@ -143,7 +143,14 @@ ap update --force        # Skip confirmation prompt
 
 For external skills, updates go through the full sandboxed security pipeline (download → hash → scan → install), the same as the initial install.
 
-Locally edited skills are skipped to avoid overwriting your changes. The `Installed` column in `ap search` shows **Edited** (yellow) for modified skills.
+Locally edited skills prompt before overwriting (default **No**):
+
+```text
+my-skill has been locally edited.
+Update my-skill anyway? Local changes will be overwritten [y/N]:
+```
+
+Press Enter to skip, or `y` to overwrite. Use `--force` to bypass the prompt entirely. When updating all skills, each edited skill is prompted individually. The `Installed` column in `ap search` shows **Edited** (yellow) for modified skills.
 
 ## Scanning External Skills
 
