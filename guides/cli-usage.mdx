@@ -169,6 +169,22 @@ ap uninstall my-skill
 
 Removes the skill from `~/.claude/skills/` (or `~/.claude/agents/` for agents).
 
+## Unpublishing and Republishing
+
+Archive a skill to hide it from marketplace search and listings:
+
+```bash
+ap unpublish my-skill
+```
+
+Existing purchasers retain download access. To restore an archived skill:
+
+```bash
+ap republish my-skill
+```
+
+Both commands require confirmation and can only be run by the skill author.
+
 ## ClawHub Claims
 
 If you authored a skill on ClawHub, claim ownership:
@@ -204,5 +220,6 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap scan <slug>` | Scan an external skill without installing |
 | `ap uninstall <slug>` | Remove an installed skill |
 | `ap unpublish <slug>` | Archive a published skill (hide from marketplace) |
+| `ap republish <slug>` | Restore an archived skill to the marketplace |
 | `ap claim <slug>` | Claim a ClawHub skill |
 | `ap verify` | Verify installed skills against content hash pins |
