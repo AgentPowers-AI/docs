@@ -89,6 +89,26 @@ Every installed skill is pinned by its content hash in `~/.agentpowers/pins.json
 - On update, AgentPowers detects the mismatch and re-scans before applying
 - Run `ap verify` to check all installed skills against their recorded hashes
 
+### Updating
+
+External skills support the same update flow as native skills:
+
+```bash
+ap update ontology           # Update a single external skill
+ap update                    # Check all installed skills (native + external)
+```
+
+When a newer version is available, the update command:
+
+1. Fetches the latest version from the external source via `GET /v1/detail/{slug}?source=clawhub`
+2. Compares the installed version against the latest
+3. Re-runs the full sandboxed install flow (download → hash → scan → install)
+4. Updates the pin with the new version and content hash
+
+**Edit detection works the same way.** If you've modified the installed files, `ap update` detects the hash mismatch and skips the skill with a yellow "locally edited" warning.
+
+**Missing version info.** Some external skills are pinned without version information (e.g., when the original install didn't report a version). In this case, `ap update` treats the skill as up-to-date if it hasn't been locally edited, avoiding unnecessary re-downloads.
+
 ## Security
 
 External skills receive the same security treatment as native AgentPowers skills:

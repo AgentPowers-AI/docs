@@ -133,13 +133,15 @@ The `--bump` and `--version` flags are mutually exclusive. The previous version 
 
 ## Updating Installed Skills
 
-Keep installed skills up to date:
+Keep installed skills up to date -- works for both native and external (e.g., ClawHub) skills:
 
 ```bash
-ap update                # Check all installed skills
+ap update                # Check all installed skills (native + external)
 ap update my-skill       # Update a single skill
 ap update --force        # Skip confirmation prompt
 ```
+
+For external skills, updates go through the full sandboxed security pipeline (download → hash → scan → install), the same as the initial install.
 
 Locally edited skills are skipped to avoid overwriting your changes. The `Installed` column in `ap search` shows **Edited** (yellow) for modified skills.
 
