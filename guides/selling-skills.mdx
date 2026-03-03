@@ -52,7 +52,7 @@ Instructions for Claude when using this skill...
 
 ```bash
 ap login
-ap publish ./my-skill
+ap publish ./my-skill --price 5.00
 ```
 
 The CLI:
@@ -61,7 +61,7 @@ The CLI:
 2. Creates the skill record via `POST /v1/skills`
 3. Uploads the package via `POST /v1/skills/{slug}/upload`
 
-Your skill starts at **v1.0.0**.
+Your skill starts at **v1.0.0**. Omit `--price` for free skills (defaults to $0).
 
 ### 3. Publishing Updates
 
@@ -85,6 +85,14 @@ Add a changelog message:
 ap publish ./my-skill --bump minor --changelog "Added dark mode support"
 ```
 
+Change the price during an update:
+
+```bash
+ap publish ./my-skill --bump patch --price 9.99
+```
+
+**Omitting `--price` on updates preserves the existing price.** Only pass `--price` when you want to change it. To switch a paid skill to free, explicitly pass `--price 0`.
+
 **How it works:**
 
 1. The CLI detects the existing skill (POST returns 409)
@@ -94,7 +102,7 @@ ap publish ./my-skill --bump minor --changelog "Added dark mode support"
 
 **One pending version at a time.** If a version is still awaiting security review, you cannot publish another until it completes.
 
-You can also update metadata (title, description, category, price) without bumping the version -- just change the frontmatter and re-publish.
+You can also update metadata (title, description, category) during re-publish -- just change the frontmatter and run `ap publish` again.
 
 ### 4. Unpublishing
 

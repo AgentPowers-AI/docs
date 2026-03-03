@@ -112,7 +112,8 @@ my-skill/
 
 ```bash
 ap login
-ap publish ./my-skill
+ap publish ./my-skill                    # Free skill (default)
+ap publish ./my-skill --price 5.00       # Paid skill at $5.00
 ```
 
 The CLI packages your directory as a ZIP, creates the skill record, and uploads the package. Your skill enters the security review pipeline automatically.
@@ -127,9 +128,12 @@ ap publish ./my-skill --bump minor       # Minor version bump
 ap publish ./my-skill --bump major       # Major version bump
 ap publish ./my-skill --version 2.0.0    # Explicit version
 ap publish ./my-skill --changelog "Bug fixes and performance improvements"
+ap publish ./my-skill --bump patch --price 9.99   # Update version + change price
 ```
 
 The `--bump` and `--version` flags are mutually exclusive. The previous version stays live while the new version undergoes security review.
+
+**Price behavior on updates:** Omitting `--price` preserves the current price. Only pass `--price` when you want to change it. Use `--price 0` to switch a paid skill to free.
 
 ## Updating Installed Skills
 
@@ -222,7 +226,7 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap search <query>` | Search the marketplace (unified, sectioned results) |
 | `ap detail <slug>` | View skill details (`--source`, `--scan`, `--type` flags) |
 | `ap install <slug>` | Install a skill (`--license`, `--source` flags) |
-| `ap publish <path>` | Publish or update a skill (`--bump`, `--version`, `--changelog` flags) |
+| `ap publish <path>` | Publish or update a skill (`--price`, `--bump`, `--version`, `--changelog` flags) |
 | `ap update [slug]` | Update installed skills to latest versions (`--force` flag) |
 | `ap scan <slug>` | Scan an external skill without installing |
 | `ap uninstall <slug>` | Remove an installed skill |
