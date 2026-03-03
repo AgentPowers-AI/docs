@@ -105,7 +105,7 @@ When a newer version is available, the update command:
 3. Re-runs the full sandboxed install flow (download → hash → scan → install)
 4. Updates the pin with the new version and content hash
 
-**Edit detection works the same way.** If you've modified the installed files, `ap update` detects the hash mismatch and skips the skill with a yellow "locally edited" warning.
+**Edit detection works the same way.** If you've modified the installed files, `ap update` detects the hash mismatch and prompts before overwriting. If a newer version is available, the prompt asks whether to update anyway. If the version is already current, the prompt offers to restore the original. Use `--force` to bypass the prompt.
 
 **Missing version info.** Some external skills are pinned without version information (e.g., when the original install didn't report a version). In this case, `ap update` treats the skill as up-to-date if it hasn't been locally edited, avoiding unnecessary re-downloads.
 

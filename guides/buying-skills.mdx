@@ -165,8 +165,13 @@ For external skills, updates go through the same sandboxed security pipeline as 
 **Locally edited skills are protected.** If you've modified an installed skill's files, `ap update` detects the change via content hash and prompts before overwriting:
 
 ```text
+# When a newer version is available:
 my-skill has been locally edited.
 Update my-skill anyway? Local changes will be overwritten [y/N]:
+
+# When already at the latest version:
+my-skill has been locally edited.
+Restore my-skill to original? Local changes will be overwritten [y/N]:
 ```
 
 The default is **No** -- pressing Enter skips the update. Use `--force` to bypass the prompt entirely. This applies to both native and external skills.
