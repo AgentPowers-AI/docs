@@ -92,10 +92,34 @@ The MCP plugin shares the same auth token stored by the CLI at `~/.agentpowers/a
 | `GET /v1/purchases` | Yes |
 | `GET /v1/purchases/confirm` | Yes |
 | `POST /v1/installations` | Yes |
+| `POST /v1/skills/{slug}/reviews` | Yes |
+| `GET /v1/skills/{slug}/reviews` | No |
+| `GET /v1/users/profile` | Yes |
+| `PATCH /v1/users/profile` | Yes |
 | `POST /v1/sellers/connect` | Yes |
 | `GET /v1/sellers/earnings` | Yes |
+| `GET /v1/sellers/skills` | Yes |
+| `GET /v1/sellers/sales` | Yes |
+| `GET /v1/sellers/revenue` | Yes |
+| `GET /v1/sellers/revenue/breakdown` | Yes |
+| `GET /v1/sellers/activity` | Yes |
+| `GET /v1/sellers/{username}` | No |
+| `GET /v1/sellers/{username}/skills` | No |
+| `GET /v1/admin/*` | Yes (admin only) |
 | `POST /v1/auth/cli-token` | Yes (Clerk JWT) |
 | `POST /v1/auth/revoke-cli-token` | Yes (CLI token) |
+
+## Admin Endpoints
+
+Admin endpoints require the `is_admin` flag on the user record. Non-admin users receive `403 Forbidden`. These endpoints are used for marketplace moderation:
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /v1/admin/claims/sandbox` | List sandbox claims awaiting review |
+| `POST /v1/admin/claims/{id}/approve` | Approve or reject a sandbox claim |
+| `GET /v1/admin/abuse/flagged` | View flagged abuse reports |
+
+Admin status is set at the database level and cannot be self-assigned.
 
 ## Rate Limits
 

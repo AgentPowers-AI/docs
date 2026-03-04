@@ -25,6 +25,44 @@ curl -H "Authorization: Bearer TOKEN" \
 
 Returns total earnings and sale count.
 
+## Setting Up Your Profile
+
+### Username Requirement
+
+Before publishing, you must set a username on your profile. Publishing without a username returns a `400 USERNAME_REQUIRED` error.
+
+Set your username via the API:
+
+```bash
+curl -X PATCH "https://api.agentpowers.ai/v1/users/profile" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "my-username"}'
+```
+
+Username rules:
+
+- 3-30 characters, lowercase alphanumeric and hyphens only
+- No leading or trailing hyphens
+- Case-insensitive uniqueness (e.g., `My-Name` and `my-name` conflict)
+- Reserved words (like `admin`, `api`, `support`) are blocked
+
+Check your current profile (including a suggested username based on your GitHub account):
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/users/profile"
+```
+
+You can also update your bio and social links:
+
+```bash
+curl -X PATCH "https://api.agentpowers.ai/v1/users/profile" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "my-username", "bio": "I build great skills", "social_links": {"github": "https://github.com/me"}}'
+```
+
 ## Publishing a Skill
 
 ### 1. Prepare Your Skill
@@ -138,6 +176,74 @@ Outcomes:
 - Set `price_cents: 0` for free skills
 - **Minimum price for paid skills is $3.00** (`price_cents: 300`). Values between 1 and 299 are rejected
 - AgentPowers takes a **10% platform fee**; you receive 90% via Stripe Connect
+
+## Seller Dashboard
+
+Track your sales performance with dedicated seller endpoints (all require authentication).
+
+### Your Skills
+
+View all your published skills with revenue data:
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/sellers/skills"
+```
+
+### Recent Sales
+
+See your most recent sales with buyer information:
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/sellers/sales?limit=20"
+```
+
+### Revenue Analytics
+
+Get daily revenue timeseries (default 30 days, range 1-365):
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/sellers/revenue?days=30"
+```
+
+Per-skill revenue breakdown:
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/sellers/revenue/breakdown"
+```
+
+### Activity Feed
+
+Combined feed of purchases and installs:
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/sellers/activity?limit=20"
+```
+
+### Public Seller Profile
+
+Your public profile is available at:
+
+```bash
+curl "https://api.agentpowers.ai/v1/sellers/my-username"
+curl "https://api.agentpowers.ai/v1/sellers/my-username/skills"
+```
+
+These are public endpoints -- no authentication required for viewers.
+
+## Reviews on Your Skills
+
+Buyers can leave 1-5 star reviews on your skills. Review ratings are displayed in skill detail views (`rating_average` and `rating_count` fields on `GET /v1/detail/{slug}`). You can view reviews on any of your skills:
+
+```bash
+curl "https://api.agentpowers.ai/v1/skills/my-skill/reviews"
+```
+
+Self-reviews are prevented -- you cannot review your own skills.
 
 ## ClawHub Claims
 

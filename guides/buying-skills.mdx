@@ -187,6 +187,61 @@ The `ap search` command shows whether installed skills have been locally modifie
 - **Yes** (green) -- installed, unmodified
 - **Edited** (yellow) -- installed, locally modified (hash mismatch)
 
+## Reviews
+
+### Viewing Reviews
+
+See what other users think before you buy or install:
+
+```bash
+curl "https://api.agentpowers.ai/v1/skills/my-skill/reviews"
+```
+
+Returns a list of reviews with individual ratings and an overall average:
+
+```json
+{
+  "items": [
+    {
+      "id": "review-1",
+      "rating": 5,
+      "text": "Excellent skill, saved me hours of work.",
+      "user_id": "user_abc",
+      "created_at": "2026-03-01T12:00:00Z"
+    }
+  ],
+  "total": 1,
+  "skill_slug": "my-skill",
+  "average_rating": 5.0
+}
+```
+
+The `GET /v1/detail/{slug}` endpoint also includes `rating_average` and `rating_count` fields, so you can see the overall rating without fetching individual reviews.
+
+The CLI shows star ratings in `ap detail`:
+
+```bash
+ap detail my-skill
+# Rating: ★★★★★ (4.8 avg, 23 reviews)
+```
+
+### Leaving a Review
+
+After installing or purchasing a skill, leave a review (requires authentication):
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/skills/my-skill/reviews" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"rating": 5, "text": "Great skill!"}'
+```
+
+- **Rating** is required (1-5 stars)
+- **Text** is optional but encouraged
+- You cannot review your own skills (returns 400)
+- One review per user per skill (duplicate returns 409)
+- Archived skills cannot be reviewed (returns 404)
+
 ## ZIP Downloads (claude.ai Web)
 
 For claude.ai web users who cannot use the CLI, skills are available as ZIP downloads:

@@ -181,6 +181,23 @@
             }
           },
           {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(code|cowork|web)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Platform"
+            }
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -1273,7 +1290,7 @@
           "sellers"
         ],
         "summary": "List My Skills",
-        "description": "List current seller's published skills.",
+        "description": "List current seller's published skills with revenue data.",
         "operationId": "list_my_skills_v1_sellers_skills_get",
         "responses": {
           "200": {
@@ -1287,13 +1304,165 @@
         }
       }
     },
+    "/v1/sellers/sales": {
+      "get": {
+        "tags": [
+          "sellers"
+        ],
+        "summary": "List My Sales",
+        "description": "List recent sales for the current seller's skills.",
+        "operationId": "list_my_sales_v1_sellers_sales_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sellers/revenue/breakdown": {
+      "get": {
+        "tags": [
+          "sellers"
+        ],
+        "summary": "Get Revenue Breakdown",
+        "description": "Revenue breakdown per skill for the current seller.",
+        "operationId": "get_revenue_breakdown_v1_sellers_revenue_breakdown_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sellers/revenue": {
+      "get": {
+        "tags": [
+          "sellers"
+        ],
+        "summary": "Get Seller Revenue",
+        "description": "Daily revenue timeseries for the past N days.",
+        "operationId": "get_seller_revenue_v1_sellers_revenue_get",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 365,
+              "minimum": 1,
+              "default": 30,
+              "title": "Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sellers/activity": {
+      "get": {
+        "tags": [
+          "sellers"
+        ],
+        "summary": "Get Seller Activity",
+        "description": "Activity feed combining installs and purchases for seller's skills.",
+        "operationId": "get_seller_activity_v1_sellers_activity_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/sellers/{username}": {
       "get": {
         "tags": [
           "sellers"
         ],
         "summary": "Get Seller Profile",
-        "description": "Get public seller profile.",
+        "description": "Get public seller profile by username.",
         "operationId": "get_seller_profile_v1_sellers__username__get",
         "parameters": [
           {
@@ -1375,7 +1544,7 @@
           "admin"
         ],
         "summary": "Review Sandboxed Claims",
-        "description": "List all sandboxed claims awaiting admin review.\n\nReturns every claim with status 'sandbox', joined with skill and user\ndata for display in the admin dashboard.\n\nArgs:\n    user: Authenticated caller (any authenticated user for now; role\n          gating can be layered on later).\n    db: Database connection.\n\nReturns:\n    dict with ``items`` (list of claim dicts) and ``total`` (int).",
+        "description": "List all sandboxed claims awaiting admin review.\n\nReturns every claim with status 'sandbox', joined with skill and user\ndata for display in the admin dashboard.\n\nArgs:\n    user: Authenticated admin caller.\n    db: Database connection.\n\nReturns:\n    dict with ``items`` (list of claim dicts) and ``total`` (int).",
         "operationId": "review_sandboxed_claims_v1_admin_claims_sandbox_get",
         "responses": {
           "200": {
@@ -1809,6 +1978,162 @@
         }
       }
     },
+    "/v1/users/profile": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get Profile",
+        "description": "Return current user's profile.",
+        "operationId": "get_profile_v1_users_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update Profile",
+        "description": "Update current user's profile.\n\nFor username: checks uniqueness with case-insensitive comparison.\nReturns 409 if username is taken.",
+        "operationId": "update_profile_v1_users_profile_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skills/{slug}/reviews": {
+      "post": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Create Review",
+        "description": "Submit a review for a skill. One review per user per skill.",
+        "operationId": "create_review_v1_skills__slug__reviews_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "List Reviews",
+        "description": "List reviews for a skill (public, no auth required).",
+        "operationId": "list_reviews_v1_skills__slug__reviews_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -1855,6 +2180,28 @@
               }
             ],
             "title": "Github Username"
+          },
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
           }
         },
         "type": "object",
@@ -2081,6 +2428,208 @@
         ],
         "title": "InstallationResponse"
       },
+      "ProfileResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "github_username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Username"
+          },
+          "joined_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Joined At"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "website_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url"
+          },
+          "linkedin_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linkedin Url"
+          },
+          "twitter_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Twitter Url"
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          },
+          "username_suggestion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username Suggestion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email"
+        ],
+        "title": "ProfileResponse",
+        "description": "Response body for profile endpoints."
+      },
+      "ProfileUpdate": {
+        "properties": {
+          "username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Username"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "website_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url"
+          },
+          "linkedin_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linkedin Url"
+          },
+          "twitter_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Twitter Url"
+          }
+        },
+        "type": "object",
+        "title": "ProfileUpdate",
+        "description": "Request body for profile updates."
+      },
       "PurchaseListItem": {
         "properties": {
           "purchase_id": {
@@ -2230,6 +2779,17 @@
               }
             ],
             "title": "License Code"
+          },
+          "purchased_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchased At"
           }
         },
         "type": "object",
@@ -2278,6 +2838,116 @@
           "message"
         ],
         "title": "RedeemResponse"
+      },
+      "ReviewCreate": {
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Rating"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rating"
+        ],
+        "title": "ReviewCreate"
+      },
+      "ReviewListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "skill_slug": {
+            "type": "string",
+            "title": "Skill Slug"
+          },
+          "average_rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Rating"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "skill_slug",
+          "average_rating"
+        ],
+        "title": "ReviewListResponse"
+      },
+      "ReviewResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "skill_slug": {
+            "type": "string",
+            "title": "Skill Slug"
+          },
+          "rating": {
+            "type": "integer",
+            "title": "Rating"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "author_display_name": {
+            "type": "string",
+            "title": "Author Display Name"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "skill_slug",
+          "rating",
+          "text",
+          "author_display_name",
+          "created_at"
+        ],
+        "title": "ReviewResponse"
       },
       "SecurityResultsResponse": {
         "properties": {
