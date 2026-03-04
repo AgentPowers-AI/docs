@@ -28,43 +28,77 @@ The plugin picks up the token automatically.
 
 Once enabled, Claude has access to these tools during conversation:
 
-### search_skills
+### search_marketplace
 
-Search the marketplace by keyword:
+Search the marketplace by keyword, category, or type:
 
 ```
 "Find me a Python testing skill"
+"Search for agents in the dev category"
 ```
 
-Claude calls `search_skills` with your query and presents matching results.
+Claude calls `search_marketplace` with your query and presents matching results from both AgentPowers and external sources (e.g., ClawHub).
 
-### get_skill
+### get_skill_details
 
-View details about a specific skill:
+View details about a specific skill or agent:
 
 ```
 "Show me details for the code-review-pro skill"
+"Get details for weather from ClawHub"
 ```
 
-Returns the full skill description, price, security status, and download count.
+Returns the full description, price, security status, version, author, and download count. Supports an optional `source` parameter to look up skills from specific sources.
 
 ### install_skill
 
-Install a skill directly from conversation:
+Install a skill or agent directly from conversation:
 
 ```
 "Install the code-review-pro skill"
 ```
 
-For free skills, installation happens immediately. For paid skills, Claude opens Stripe Checkout in your browser.
+For free skills, installation happens immediately. For paid skills, Claude opens Stripe Checkout in your browser. The plugin checks security status before installing and saves a version pin for update tracking.
 
-### list_categories
+### check_purchase_status
 
-Browse available categories:
+Check whether a purchase has completed:
 
 ```
-"What skill categories are available?"
+"Check the status of my purchase abc-123"
 ```
+
+Returns payment status and license code if completed. Requires authentication.
+
+### check_installed
+
+List all installed skills and agents:
+
+```
+"What skills do I have installed?"
+```
+
+Shows each installed skill's version, source, security status, and whether it has been locally edited.
+
+### uninstall_skill
+
+Remove an installed skill or agent:
+
+```
+"Uninstall the code-review-pro skill"
+```
+
+Removes the skill directory and its version pin.
+
+### check_for_updates
+
+Check if any installed skills have newer versions available:
+
+```
+"Are any of my skills out of date?"
+```
+
+Reports which skills are up to date, which have updates, and which have been locally edited. Use `ap update` in your terminal to install updates.
 
 ## Platforms
 
