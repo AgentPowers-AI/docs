@@ -3345,5 +3345,11 @@
         "title": "ValidationError"
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "https://api.agentpowers.ai",
+      "description": "Production"
+    }
+  ]
 }
