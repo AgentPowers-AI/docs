@@ -54,40 +54,24 @@ The CLI renders this as a unified table with Source, Type, Price, and Security c
 - **pass/warn** -- AgentPowers has scanned this skill version before
 - **unscanned** -- No one has installed this version through AgentPowers yet; it will be scanned on first install
 
-### Enrichment Cache
-
-When external search results lack detail fields (e.g., download counts, stars, comments), the API checks an enrichment cache before falling back to individual detail lookups. The enrichment cache is populated whenever a full detail fetch is made for an external skill (via `GET /v1/detail/{slug}`), avoiding redundant API calls to the upstream registry.
-
-Cached enrichment data includes:
-
-| Field | Description |
-|-------|-------------|
-| `source_downloads` | Total downloads from the original registry |
-| `source_stars` | Star/rating count |
-| `source_comments` | Comment count |
-| `source_versions_count` | Number of published versions |
-| `owner_display_name` | Author display name |
-| `owner_avatar_url` | Author avatar URL |
-
 ### Installing
 
 External skills go through a sandboxed install + security scan flow:
 
 1. The CLI downloads the skill into a temporary sandbox directory
-2. File contents are hashed (SHA-256)
-3. AgentPowers checks its scan cache for that hash
-4. **Cache hit** -- the cached security result is returned instantly
-5. **Cache miss** -- the full security pipeline runs (static validation, VirusTotal, AI review, agent checks), then caches the result
-6. **Pass or warn** -- files move to `~/.claude/skills/` and a pin is recorded
-7. **Block** -- findings are displayed and the skill is not installed
+2. AgentPowers checks if this exact version has been scanned before
+3. **Cache hit** -- the cached security result is returned instantly
+4. **Cache miss** -- the full security pipeline runs (static validation, malware detection, AI review, agent checks), then caches the result
+5. **Pass or warn** -- files move to `~/.claude/skills/` and a version pin is recorded
+6. **Block** -- findings are displayed and the skill is not installed
 
 ### Version Pinning
 
-Every installed skill is pinned by its content hash in `~/.agentpowers/pins.json`. This protects against supply chain attacks:
+Every installed skill is pinned by its content. This protects against supply chain attacks:
 
-- If an author re-uploads a skill (files change), the hash changes
-- On update, AgentPowers detects the mismatch and re-scans before applying
-- Run `ap verify` to check all installed skills against their recorded hashes
+- If an author re-uploads a skill (files change), the pin detects the mismatch
+- On update, AgentPowers re-scans before applying the new version
+- Run `ap verify` to check all installed skills against their recorded pins
 
 ### Updating
 
@@ -100,12 +84,12 @@ ap update                    # Check all installed skills (native + external)
 
 When a newer version is available, the update command:
 
-1. Fetches the latest version from the external source via `GET /v1/detail/{slug}?source=clawhub`
+1. Fetches the latest version from the external source
 2. Compares the installed version against the latest
-3. Re-runs the full sandboxed install flow (download → hash → scan → install)
-4. Updates the pin with the new version and content hash
+3. Re-runs the full sandboxed install flow (download, scan, install)
+4. Updates the pin with the new version
 
-**Edit detection works the same way.** If you've modified the installed files, `ap update` detects the hash mismatch and prompts before overwriting. If a newer version is available, the prompt asks whether to update anyway. If the version is already current, the prompt offers to restore the original. Use `--force` to bypass the prompt.
+**Edit detection works the same way.** If you've modified the installed files, `ap update` detects the change and prompts before overwriting. Use `--force` to bypass the prompt.
 
 **Missing version info.** Some external skills are pinned without version information (e.g., when the original install didn't report a version). In this case, `ap update` treats the skill as up-to-date if it hasn't been locally edited, avoiding unnecessary re-downloads.
 
@@ -116,7 +100,7 @@ External skills receive the same security treatment as native AgentPowers skills
 | Check | Description |
 |-------|-------------|
 | Static validation | File type checks, dangerous pattern scanning |
-| VirusTotal | Malware detection across 70+ engines |
+| Malware detection | Scanned for known malware and malicious patterns |
 | AI security review | Semantic analysis for injection, auth flaws, data exposure |
 | Agent-specific checks | Tool audit, instruction analysis, trust scoring |
 
@@ -133,8 +117,6 @@ The only difference: native skills are scanned at publish time. External skills 
 
 ### API
 
-The API provides several endpoints for working with external skills and scan results:
-
 **Search Results**
 
 ```bash
@@ -149,8 +131,7 @@ Returns a sectioned response with `agentpowers` and `clawhub` keys. External ite
 - `source_downloads` -- Same as `source_installs` (full detail)
 - `source_stars` -- Star/rating count
 - `source_comments` -- Comment count
-- `ap_security_status` -- AgentPowers scan result ("pass", "warn", "block", or null if unscanned)
-- `ap_scan_hash` -- SHA-256 content hash of the scanned version
+- `ap_security_status` -- AgentPowers scan result ("pass", "warn", or null if unscanned)
 
 **Unified Detail**
 
@@ -162,28 +143,15 @@ GET /v1/detail/{slug}?source=clawhub
 
 Returns author info, version, stats, description, and AgentPowers security status.
 
-**Scan Cache Lookup**
+**Security Results**
 
-Check if a specific content hash has been scanned:
-
-```bash
-GET /v1/security/check/{content_hash}
-```
-
-Returns the cached security result instantly if available, or indicates no cached result.
-
-**Triggering a Security Scan**
-
-For advanced use cases, initiate a security scan on a package:
+View the security scan results for any skill:
 
 ```bash
-POST /v1/security/scan-package
-Content-Type: application/octet-stream
-
-[binary package data]
+GET /v1/security/results/{slug}
 ```
 
-Returns the security scan result (pass/warn/block) with detailed findings.
+Returns the scan outcome (pass/warn/block) with findings.
 
 ### CLI
 
@@ -201,10 +169,8 @@ ap detail ontology --scan --source clawhub
 
 This downloads to a temporary sandbox, scans, displays per-finding result cards, and cleans up. Nothing is installed.
 
-**Verify integrity** -- The `ap verify` command checks all installed skills against their recorded content hashes:
+**Verify integrity** -- The `ap verify` command checks all installed skills against their recorded pins:
 
 ```bash
 ap verify
 ```
-
-This compares each skill's current content hash against its recorded pin in `~/.agentpowers/pins.json`.

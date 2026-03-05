@@ -23,7 +23,7 @@ ap whoami    # Check current session
 ap logout    # Clear stored token
 ```
 
-Tokens are stored at `~/.agentpowers/auth.json` with restricted permissions (0600). The CLI uses long-lived 90-day tokens (exchanged from Clerk JWTs) so you rarely need to re-login.
+The CLI uses long-lived tokens stored locally with restricted permissions, so you rarely need to re-login.
 
 ## Searching
 
@@ -211,11 +211,11 @@ If you authored a skill on ClawHub, claim ownership:
 ap claim my-clawhub-skill
 ```
 
-Claims are verified against your GitHub account.
+Claims are verified automatically.
 
 ## Verifying Installed Skills
 
-External skills (from ClawHub and other sources) are pinned by content hash in `~/.agentpowers/pins.json`. This protects against supply chain attacks. To verify that all installed skills match their recorded pins:
+External skills (from ClawHub and other sources) are pinned by content to protect against supply chain attacks. To verify that all installed skills match their recorded pins:
 
 ```bash
 ap verify

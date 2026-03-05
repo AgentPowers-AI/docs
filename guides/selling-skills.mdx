@@ -5,16 +5,16 @@ description: How to publish skills, set prices, and receive payouts
 
 ## Becoming a Seller
 
-### Stripe Connect Onboarding
+### Payout Onboarding
 
-Before receiving payouts, complete Stripe Connect onboarding:
+Before receiving payouts, complete the onboarding process via the CLI or API:
 
 ```bash
 curl -X POST "https://api.agentpowers.ai/v1/sellers/connect" \
   -H "Authorization: Bearer TOKEN"
 ```
 
-This returns an onboarding URL. Complete the Stripe form to enable payouts.
+This returns an onboarding URL. Complete the form to enable payouts.
 
 ### Check Earnings
 
@@ -161,7 +161,7 @@ ap republish my-skill
 Every submission passes through the security pipeline automatically:
 
 1. **Static validation** -- File type checks, dangerous pattern scanning
-2. **VirusTotal scan** -- Malware detection
+2. **Malware detection** -- Scanned for known malware
 3. **AI security review** -- Semantic analysis for injection, auth flaws, data exposure
 4. **Agent-specific checks** (for agents) -- Tool access audit, instruction analysis
 
@@ -174,8 +174,8 @@ Outcomes:
 ## Pricing
 
 - Set `price_cents: 0` for free skills
-- **Minimum price for paid skills is $3.00** (`price_cents: 300`). Values between 1 and 299 are rejected
-- AgentPowers takes a **10% platform fee**; you receive 90% via Stripe Connect
+- **Minimum price for paid skills is $3.00**
+- AgentPowers takes a **10% platform fee**; you receive 90% via payouts
 
 ## Seller Dashboard
 
@@ -253,4 +253,4 @@ If you authored a skill on ClawHub (the free marketplace), you can claim ownersh
 ap claim my-clawhub-skill
 ```
 
-Claims are verified against your GitHub account. High-confidence claims are auto-approved; borderline cases go to admin review.
+Claims are verified against your GitHub account. Most claims are processed automatically.

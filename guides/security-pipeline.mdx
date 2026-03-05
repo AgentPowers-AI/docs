@@ -14,28 +14,21 @@ Every skill and agent submission passes through a multi-layer security pipeline 
 The first layer checks the submission package itself:
 
 - **File type verification** -- Only allowed file types pass through
-- **Dangerous pattern scanning** -- Regex checks for shell commands, environment variable harvesting, obfuscation techniques
+- **Dangerous pattern scanning** -- Checks for shell commands, environment variable harvesting, obfuscation techniques
 - **Size limits** -- Packages must stay within size constraints
 
-### 2. VirusTotal Scan
+### 2. Malware Detection
 
-The package is submitted to VirusTotal for malware detection:
-
-- Scanned against 70+ antivirus engines
-- Results checked for any positive detections
-- Known-clean files are cached to avoid redundant scans
-- Uses polling with linear backoff (up to ~3 minutes) to handle analysis queues
+The package is scanned for known malware and malicious patterns.
 
 ### 3. AI Security Review
 
-An AI-powered semantic analysis using Claude checks for:
+An AI-powered semantic analysis checks for:
 
 - **Prompt injection** -- Attempts to override Claude's instructions
 - **Authentication flaws** -- Improper credential handling
 - **Data exposure** -- Leaking user data or API keys
 - **Privilege escalation** -- Requesting unnecessary permissions
-
-The AI review uses a model fallback chain -- if the primary model is unavailable, it automatically switches to a backup model.
 
 ### 4. Agent-Specific Checks
 
@@ -44,46 +37,6 @@ Submissions of type `agent` receive additional scrutiny:
 - **Tool access audit** -- Which tools does the agent request?
 - **Instruction analysis** -- Are instructions appropriate for the declared purpose?
 - **Trust level scoring** -- Overall risk assessment based on capabilities requested
-
-## Scan Response
-
-The scan result includes a `layers` array with per-layer details:
-
-```json
-{
-  "status": "warn",
-  "score": 4,
-  "findings": [...],
-  "layers": [
-    {
-      "name": "static_validation",
-      "status": "pass",
-      "score": 0,
-      "findings": []
-    },
-    {
-      "name": "virustotal",
-      "status": "skip",
-      "score": null,
-      "findings": []
-    },
-    {
-      "name": "ai_review",
-      "status": "warn",
-      "score": 4,
-      "findings": [...]
-    }
-  ]
-}
-```
-
-### Score Semantics
-
-- **`score: 0`** -- The layer ran and found nothing (genuine pass)
-- **`score: null`** -- The layer could not run (skipped, e.g., API unavailable)
-- **`status: "skip"`** -- Displayed as `--` in CLI output; does not count against the skill
-
-The pipeline's aggregate score uses `max()` across all layers, filtering out `null` scores. Skipped layers never penalize a submission.
 
 ## Outcomes
 
@@ -115,19 +68,9 @@ If your submission is blocked and you believe the finding is a false positive, u
 External skills from registries like ClawHub go through the same full security pipeline. The difference is timing:
 
 - **Native skills** -- scanned at publish time, before they appear in the marketplace
-- **External skills** -- scanned at install time, with results cached by content hash
+- **External skills** -- scanned at install time, with results cached so subsequent users get instant results
 
-### Scan Cache
-
-The first user to install a specific version of an external skill triggers the full scan. The result is cached by SHA-256 content hash. Every subsequent user installing the same version gets instant results.
-
-If the author re-uploads a skill (changing its files), the hash changes, the cache misses, and a fresh scan runs automatically.
-
-### Version Pinning
-
-Installed skills are pinned by content hash in `~/.agentpowers/pins.json`. Run `ap verify` to check all installed skills against their pins and detect tampering or unauthorized updates.
-
-See the [External Skills guide](/guides/external-skills) for full details.
+If an author updates a skill (changing its files), the cache is invalidated and a fresh scan runs automatically on the next install.
 
 ## For Buyers
 

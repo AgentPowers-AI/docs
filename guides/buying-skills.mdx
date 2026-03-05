@@ -156,9 +156,9 @@ ap update --force           # Skip the confirmation prompt
 
 The update command works for **both native AgentPowers skills and external skills** (e.g., ClawHub):
 
-1. Compares your installed version (from `~/.agentpowers/pins.json`) against the latest version on the API
+1. Compares your installed version against the latest version on the API
 2. Downloads and installs the new version if one is available
-3. Updates the pin with the new version and content hash
+3. Updates the version pin
 
 For external skills, updates go through the same sandboxed security pipeline as the initial install -- the new version is downloaded to a sandbox, scanned, and only installed if it passes.
 
