@@ -80,7 +80,7 @@ The `GET /v1/skills` endpoint supports filtering and sorting:
 | `security_status` | `pass`, `warn` | Filter by security status |
 
 ```bash
-curl "https://api.agentpowers.ai/v1/skills?sort=downloads&price_filter=free&type=skill"
+curl "https://api.agentpowers.ai/v1/search?q=&sort=downloads&price_filter=free&type=skill"
 ```
 
 ### Categories
@@ -123,7 +123,7 @@ This endpoint verifies the Stripe session and returns the purchase record with l
 Each purchase generates a license code (`XXXX-XXXX-XXXX` format). Use it to install on another machine:
 
 ```bash
-ap install paid-skill --license ABCD-EFGH-IJKL
+ap install paid-skill --code ABCD-EFGH-IJKL
 ```
 
 Or redeem via the API:

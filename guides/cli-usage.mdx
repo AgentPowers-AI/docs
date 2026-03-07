@@ -87,7 +87,7 @@ Opens Stripe Checkout in your browser. After payment, the skill installs automat
 Use a license code to install on another machine:
 
 ```bash
-ap install premium-agent --license XXXX-XXXX-XXXX
+ap install premium-agent --code XXXX-XXXX-XXXX
 ```
 
 ### External Skills
@@ -232,7 +232,7 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap whoami` | Show current user |
 | `ap search <query>` | Search the marketplace (unified, sectioned results) |
 | `ap detail <slug>` | View skill details (`--source`, `--scan`, `--type` flags) |
-| `ap install <slug>` | Install a skill (`--license`, `--source` flags) |
+| `ap install <slug>` | Install a skill (`--code`, `--source` flags) |
 | `ap publish <path>` | Publish or update a skill (`--price`, `--bump`, `--version`, `--changelog` flags) |
 | `ap update [slug]` | Update installed skills to latest versions (`--force` flag) |
 | `ap scan <slug>` | Scan an external skill without installing |
