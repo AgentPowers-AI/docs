@@ -1,0 +1,73 @@
+---
+title: "Rate Limits"
+description: "API rate limit tiers, response headers, and handling 429 errors."
+---
+
+## Rate Limit Tiers
+
+The AgentPowers API uses per-IP rate limiting to ensure fair usage and protect against abuse.
+
+| Tier | Limit | Applies To |
+|------|-------|------------|
+| **Public read** | 60 requests/minute | Unauthenticated GET endpoints (search, skills list, categories, detail) |
+| **Authenticated read** | 10 requests/minute | Authenticated GET endpoints (earnings, purchases, profile) |
+| **Write** | 20 requests/minute | All POST, PATCH, DELETE endpoints (publish, checkout, reviews) |
+
+## Response Headers
+
+Every API response includes rate limit headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |
+
+## Handling 429 Responses
+
+When you exceed the rate limit, the API returns a `429 Too Many Requests` response:
+
+```json
+{
+  "detail": {
+    "detail": "Rate limit exceeded",
+    "code": "RATE_LIMITED"
+  }
+}
+```
+
+The `Retry-After` header indicates how many seconds to wait before retrying.
+
+### Recommended Strategy
+
+1. **Respect `Retry-After`** -- wait the specified number of seconds before retrying
+2. **Exponential backoff** -- if `Retry-After` is not present, use exponential backoff starting at 1 second
+3. **Cache responses** -- cache search results and skill details to reduce request volume
+4. **Batch operations** -- for bulk installs or updates, add a small delay (200-500ms) between requests
+
+### Example: Python with Retry
+
+```python
+import time
+import httpx
+
+def api_request(url, headers, max_retries=3):
+    for attempt in range(max_retries):
+        response = httpx.get(url, headers=headers)
+
+        if response.status_code == 429:
+            retry_after = int(response.headers.get("Retry-After", 2 ** attempt))
+            time.sleep(retry_after)
+            continue
+
+        return response
+
+    raise Exception("Rate limit exceeded after retries")
+```
+
+## Notes
+
+- Rate limits are per IP address, not per user
+- The CLI (`ap` command) includes built-in retry logic for rate-limited requests
+- The MCP server plugin handles rate limits transparently
+- If you need higher limits for integration purposes, contact us

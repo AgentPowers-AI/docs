@@ -31,6 +31,14 @@
               "guides/security-pipeline",
               "guides/external-skills"
             ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "guides/error-codes",
+              "guides/rate-limits",
+              "guides/roadmap"
+            ]
           }
         ]
       },

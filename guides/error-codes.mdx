@@ -1,0 +1,122 @@
+---
+title: "Error Codes"
+description: "Reference for all structured error codes returned by the AgentPowers API."
+---
+
+## Error Response Format
+
+When an API request fails, the response includes a structured error with a machine-readable `code` and human-readable `detail`:
+
+```json
+{
+  "detail": {
+    "detail": "You are not the author of 'my-skill'",
+    "code": "SKILL_NOT_OWNER"
+  }
+}
+```
+
+The HTTP status code indicates the error category. The `code` field enables precise error handling in your application.
+
+## Authentication Errors
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `AUTH_MISSING` | 401 | No `Authorization` header provided. Include a Bearer token. |
+| `AUTH_INVALID` | 401 | The provided token is invalid or malformed. |
+| `AUTH_EXPIRED` | 401 | The token has expired. Sign in again to get a fresh token. |
+
+## Skill Errors
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `SKILL_NOT_FOUND` | 404 | The requested skill slug does not exist. |
+| `SKILL_BLOCKED` | 403 | The skill was blocked by the security review pipeline. |
+| `SKILL_SLUG_TAKEN` | 409 | The slug is already in use. Choose a different name. |
+| `SKILL_NOT_OWNER` | 403 | You attempted to modify a skill you do not own. |
+| `SKILL_ARCHIVED` | 400 | The skill has been unpublished. Use `POST /v1/skills/{slug}/republish` to restore it. |
+| `SKILL_VERSION_PENDING` | 409 | A new version is already pending security review. Wait for it to complete. |
+| `USERNAME_REQUIRED` | 400 | You must set a username before publishing. Update your profile first via `PATCH /v1/users/profile`. |
+
+## Purchase Errors
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `PURCHASE_NOT_FOUND` | 404 | No purchase found for the given ID or session. |
+| `PURCHASE_REQUIRED` | 403 | You need to purchase this paid skill before downloading. |
+| `PURCHASE_DUPLICATE` | 409 | You already own this skill. |
+| `PURCHASE_FREE_SKILL` | 400 | This skill is free and does not require a checkout. |
+
+## Claim Errors
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `CLAIM_NOT_FOUND` | 404 | The claim ID does not exist or does not belong to you. |
+| `CLAIM_NOT_CLAWHUB` | 400 | Only external (ClawHub) skills can be claimed. |
+| `CLAIM_ALREADY_CLAIMED` | 409 | This skill has already been claimed by another user. |
+| `CLAIM_NOT_SANDBOX` | 400 | The claim is not in sandbox status and cannot be approved. |
+
+## License Errors
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `LICENSE_INVALID` | 400 | The license code does not match any purchase. |
+| `LICENSE_REDEEMED` | 409 | This license code has already been redeemed. |
+
+## User Profile Errors
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `USERNAME_TAKEN` | 409 | The requested username is already in use. Choose another. |
+| `VALIDATION_ERROR` | 422 | Input validation failed. Check the error detail for specifics. |
+
+## General Errors
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `NOT_FOUND` | 404 | The requested resource was not found. |
+| `FORBIDDEN` | 403 | You do not have permission to perform this action. |
+| `FILE_TOO_LARGE` | 413 | The uploaded file exceeds the size limit. |
+| `STORAGE_ERROR` | 502 | File storage operation failed. Retry the request. |
+| `RATE_LIMITED` | 429 | Too many requests. See [Rate Limits](/guides/rate-limits) for details. |
+
+## Handling Errors
+
+### Python
+
+```python
+import httpx
+
+response = httpx.post(f"{API_URL}/v1/checkout", json={"skill_slug": "my-skill"}, headers=headers)
+
+if response.status_code != 200:
+    error = response.json()
+    code = error.get("detail", {}).get("code")
+    message = error.get("detail", {}).get("detail")
+
+    if code == "PURCHASE_DUPLICATE":
+        print("You already own this skill!")
+    else:
+        print(f"Error: {message}")
+```
+
+### JavaScript
+
+```javascript
+const res = await fetch(`${API_URL}/v1/checkout`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+  body: JSON.stringify({ skill_slug: "my-skill" }),
+});
+
+if (!res.ok) {
+  const error = await res.json();
+  const code = error.detail?.code;
+
+  if (code === "PURCHASE_DUPLICATE") {
+    console.log("You already own this skill!");
+  } else {
+    console.log(`Error: ${error.detail?.detail}`);
+  }
+}
+```

@@ -1,0 +1,63 @@
+---
+title: "Roadmap"
+description: "Planned features and upcoming API capabilities."
+---
+
+## Current Status
+
+AgentPowers is live with the core marketplace functionality: publishing, purchasing, installing, and security scanning for Claude Code skills. The CLI, MCP plugin, and web directory are all functional.
+
+## Coming Soon
+
+These features are in development or planned for the near term.
+
+### Agent Marketplace
+
+<Note>
+The 5 agent endpoints (`/v1/agents/*`) currently return `501 Not Implemented`.
+</Note>
+
+Full support for publishing, discovering, and installing Claude Code agents (autonomous multi-step tools). Agents will go through the same security pipeline as skills with additional checks for tool access patterns and instruction safety.
+
+- `POST /v1/agents` -- publish an agent
+- `GET /v1/agents` -- list/search agents
+- `GET /v1/agents/{slug}` -- agent detail
+- `PATCH /v1/agents/{slug}` -- update agent
+- `DELETE /v1/agents/{slug}` -- remove agent
+
+### License Code Regeneration
+
+<Note>
+`POST /v1/purchases/{slug}/regenerate-code` currently returns `501 Not Implemented`.
+</Note>
+
+Allow buyers to regenerate their license code if lost or compromised. The original code is invalidated and a new one is issued.
+
+### Category Detail Pages
+
+<Note>
+`GET /v1/categories/{slug}` currently returns `501 Not Implemented`.
+</Note>
+
+Dedicated pages for each category with curated skill collections, featured creators, and usage statistics.
+
+### Enhanced Security Scanning
+
+Additional security scanners beyond VirusTotal and AI review:
+
+- **ClamAV** -- malware signature detection
+- **Snyk** -- dependency vulnerability scanning
+- **GuardDog** -- malicious package heuristics
+
+### Fraud Protection
+
+Automated detection and prevention for marketplace abuse:
+
+- Payout hold periods for new sellers
+- Repeat purchase pattern detection
+- Price anomaly flagging
+- Seller reputation tiers
+
+## Feedback
+
+Have a feature request? Open an issue on [GitHub](https://github.com/AgentPowers-AI) or reach out via our website.
