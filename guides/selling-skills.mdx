@@ -75,16 +75,16 @@ title: My Awesome Skill
 description: A skill that does amazing things
 category: development
 type: skill
-price_cents: 500
-platforms:
-  - code
-  - cowork
 ---
 
 # My Awesome Skill
 
 Instructions for Claude when using this skill...
 ```
+
+<Note>
+Price is set via the `--price` flag when publishing (e.g., `ap publish ./my-skill --price 5.00`), not in the YAML frontmatter.
+</Note>
 
 ### 2. Login and Publish
 
@@ -173,7 +173,8 @@ Outcomes:
 
 ## Pricing
 
-- Set `price_cents: 0` for free skills
+- Skills are free by default (omit `--price` or use `--price 0`)
+- Set a price with `ap publish ./my-skill --price 5.00` (in dollars)
 - **Minimum price for paid skills is $3.00**
 - AgentPowers takes a **10% platform fee**; you receive 90% via payouts
 
