@@ -828,7 +828,7 @@
           "purchases"
         ],
         "summary": "Confirm Purchase By Session",
-        "description": "Look up purchase status by Stripe session ID (post-redirect).",
+        "description": "Look up purchase status by Stripe session ID (post-redirect).\n\nNo auth required \u2014 Stripe session IDs are unguessable (64+ char random\nstrings) and act as bearer tokens for the specific checkout. This allows\nthe Astro SSR success page to confirm purchases without a Clerk JWT.",
         "operationId": "confirm_purchase_by_session_v1_purchases_confirm_get",
         "parameters": [
           {
