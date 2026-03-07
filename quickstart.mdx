@@ -39,12 +39,15 @@ ap install premium-agent --code XXXX-XXXX-XXXX
 
 ## Use the Plugin (In-Conversation)
 
-Install the AgentPowers plugin in Claude Code:
+Install the AgentPowers plugin locally in Claude Code:
 
 ```bash
-claude /plugin install agentpowers
-claude /plugin enable agentpowers
+claude plugin add --local /path/to/agentpowers-plugin
 ```
+
+<Note>
+Registry-based installation (`claude /plugin install agentpowers`) is coming soon.
+</Note>
 
 Once enabled, Claude can search and install skills during your conversation through the MCP server tools.
 
