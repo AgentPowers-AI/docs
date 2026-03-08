@@ -46,6 +46,25 @@
         }
       }
     },
+    "/v1/billing/portal": {
+      "post": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Create Portal Session",
+        "operationId": "create_portal_session_v1_billing_portal_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/skills": {
       "get": {
         "tags": [
