@@ -26,6 +26,7 @@
             "pages": [
               "guides/buying-skills",
               "guides/selling-skills",
+              "guides/agents-vs-skills",
               "guides/cli-usage",
               "guides/plugin-usage",
               "guides/security-pipeline",

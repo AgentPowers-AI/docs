@@ -1,0 +1,132 @@
+---
+title: Agents vs Skills
+description: Understanding the difference between skills and agents on AgentPowers
+---
+
+## What Are Skills?
+
+Skills are directories placed in `~/.claude/skills/` containing a `SKILL.md` file with YAML frontmatter. They extend Claude's capabilities with specialized instructions, templates, and workflows.
+
+```text
+my-skill/
+  SKILL.md      # Required: frontmatter with name, description
+  helpers.py    # Optional supporting files
+```
+
+## What Are Agents?
+
+Agents are individual `.md` files placed in `~/.claude/agents/` with YAML frontmatter that declares metadata and tool access. They act as autonomous personas that can use specific tools and follow defined instructions.
+
+```markdown
+---
+name: code-reviewer
+description: Reviews code for quality, security, and best practices
+tools: Read, Grep, Glob
+model: claude-sonnet-4-6
+---
+
+Review the provided code for...
+```
+
+### Key Differences
+
+| Aspect | Skill | Agent |
+|--------|-------|-------|
+| **Format** | Directory with `SKILL.md` | Single `.md` file with YAML frontmatter |
+| **Install location** | `~/.claude/skills/` | `~/.claude/agents/` |
+| **Tool access** | Inherits from session | Declares specific tools in frontmatter |
+| **Security surface** | Lower -- instructions only | Higher -- tool access declarations |
+| **claude.ai support** | Yes (ZIP upload) | No (CLI/Cowork only) |
+
+## API Endpoints
+
+AgentPowers provides two ways to interact with agents via the API:
+
+### Unified Endpoints (Both Types)
+
+The `/v1/skills` endpoints work for **both** skills and agents. Use the optional `?type=` filter to narrow results:
+
+```bash
+# List all items (skills + agents)
+curl "https://api.agentpowers.ai/v1/skills"
+
+# List only agents
+curl "https://api.agentpowers.ai/v1/skills?type=agent"
+
+# List only skills
+curl "https://api.agentpowers.ai/v1/skills?type=skill"
+
+# Search with type filter
+curl "https://api.agentpowers.ai/v1/search?q=code+review&type=agent"
+```
+
+### Agent-Specific Endpoints
+
+The `/v1/agents` namespace enforces `type=agent` -- it will return 404 for items that are skills:
+
+```bash
+# List agents only
+curl "https://api.agentpowers.ai/v1/agents"
+
+# Get agent details (404 if it's a skill)
+curl "https://api.agentpowers.ai/v1/agents/code-reviewer"
+
+# Publish an agent (type is forced to "agent")
+curl -X POST "https://api.agentpowers.ai/v1/agents" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"slug": "code-reviewer", "title": "Code Reviewer", ...}'
+```
+
+## CLI Usage
+
+The CLI handles both types transparently:
+
+```bash
+# Search for agents
+ap search "code review" --type agent
+
+# Install an agent (auto-detects type from API)
+ap install code-reviewer
+
+# View details (type shown in output)
+ap detail code-reviewer
+```
+
+## Security Pipeline
+
+Agents receive **additional security scrutiny** beyond what skills get:
+
+1. **Layers 1-2** (shared): File type validation, pattern scanning, VirusTotal, ClamAV, Snyk, GuardDog, AI review
+2. **Layer 3** (agent-only): Tool access audit, instruction analysis for social engineering or prompt injection, trust level scoring
+
+The trust level (`low`, `medium`, `high`) indicates the assessed risk based on which tools the agent requests access to.
+
+## Categories
+
+Agent-specific categories help with discovery:
+
+| Category | Description |
+|----------|-------------|
+| `code-agents` | Code review, testing, refactoring, and generation |
+| `automation-agents` | Workflow orchestration, task coordination, pipeline automation |
+| `research-agents` | Information gathering, data analysis, research automation |
+
+Agents can also appear in general categories like `dev-tools`, `security`, `productivity`, and `ai-ml` based on their description.
+
+## Publishing Agents
+
+Publishing an agent works the same as publishing a skill:
+
+```bash
+# Publish via unified endpoint (auto-detects type from AGENT.md frontmatter)
+ap publish ./my-agent
+
+# Or use the agent-specific API endpoint
+curl -X POST "https://api.agentpowers.ai/v1/agents" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"slug": "my-agent", "title": "My Agent", "description": "...", "type": "agent"}'
+```
+
+The CLI auto-detects whether a package is a skill or agent by checking for `SKILL.md` vs `.md` files with agent frontmatter.

@@ -627,14 +627,136 @@
           "agents"
         ],
         "summary": "List Agents",
-        "description": "List agents (paginated, filterable).",
+        "description": "List published agents with optional filtering and sorting.",
         "operationId": "list_agents_v1_agents_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(newest|price_asc|price_desc|downloads|relevance)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sort"
+            }
+          },
+          {
+            "name": "price_filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(free|paid)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Price Filter"
+            }
+          },
+          {
+            "name": "security_status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(pass|warn)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Security Status"
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Platform"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SkillListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -647,12 +769,34 @@
         "summary": "Publish Agent",
         "description": "Publish a new agent.",
         "operationId": "publish_agent_v1_agents_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillPublishRequest"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SkillPublishResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -665,7 +809,7 @@
           "agents"
         ],
         "summary": "Get Agent",
-        "description": "Get agent details.",
+        "description": "Get agent details by slug.",
         "operationId": "get_agent_v1_agents__slug__get",
         "parameters": [
           {
@@ -683,7 +827,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SkillDetail"
+                }
               }
             }
           },
@@ -704,7 +850,7 @@
           "agents"
         ],
         "summary": "Update Agent",
-        "description": "Update an existing agent.",
+        "description": "Update an existing agent \u2014 creates a new version.",
         "operationId": "update_agent_v1_agents__slug__patch",
         "parameters": [
           {
@@ -717,12 +863,24 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillUpdateRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SkillUpdateResponse"
+                }
               }
             }
           },
@@ -745,7 +903,7 @@
           "agents"
         ],
         "summary": "Download Agent",
-        "description": "Download an agent package.",
+        "description": "Download an agent package. Free agents are public. Paid require purchase.",
         "operationId": "download_agent_v1_agents__slug__download_get",
         "parameters": [
           {
@@ -763,7 +921,164 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SkillDownloadResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/agents/{slug}/upload": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Upload Agent Package",
+        "description": "Upload an agent package file to R2 storage.\n\nOnly the agent author can upload packages. Max 100 MB.",
+        "operationId": "upload_agent_package_v1_agents__slug__upload_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_agent_package_v1_agents__slug__upload_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillUploadResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/agents/{slug}/unpublish": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Unpublish Agent",
+        "description": "Unpublish (archive) an agent. Owner-only. Reversible via republish.",
+        "operationId": "unpublish_agent_v1_agents__slug__unpublish_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillUnpublishResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/agents/{slug}/republish": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Republish Agent",
+        "description": "Republish a previously archived agent. Owner-only.",
+        "operationId": "republish_agent_v1_agents__slug__republish_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillUnpublishResponse"
+                }
               }
             }
           },
@@ -1055,6 +1370,23 @@
               "minimum": 0,
               "default": 0,
               "title": "Offset"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(skill|agent)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
             }
           }
         ],
@@ -1961,6 +2293,20 @@
           "package"
         ],
         "title": "Body_scan_external_package_v1_security_scan_package_post"
+      },
+      "Body_upload_agent_package_v1_agents__slug__upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_agent_package_v1_agents__slug__upload_post"
       },
       "Body_upload_skill_package_v1_skills__slug__upload_post": {
         "properties": {

@@ -57,7 +57,6 @@ Options:
 |------|-------------|
 | `--source`, `-s` | Target a specific source (e.g., `clawhub`) |
 | `--scan` | Download and run the full security pipeline, then display per-finding results |
-| `--type`, `-t` | Filter by type (`skill` or `agent`) |
 
 ```bash
 ap detail ontology --source clawhub
@@ -231,7 +230,7 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap logout` | Clear stored credentials |
 | `ap whoami` | Show current user |
 | `ap search <query>` | Search the marketplace (unified, sectioned results) |
-| `ap detail <slug>` | View skill details (`--source`, `--scan`, `--type` flags) |
+| `ap detail <slug>` | View skill or agent details (`--source`, `--scan` flags) |
 | `ap install <slug>` | Install a skill (`--code`, `--source` flags) |
 | `ap publish <path>` | Publish or update a skill (`--price`, `--bump`, `--version`, `--changelog` flags) |
 | `ap update [slug]` | Update installed skills to latest versions (`--force` flag) |
