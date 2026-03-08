@@ -1571,6 +1571,26 @@
         }
       }
     },
+    "/v1/sellers/status": {
+      "get": {
+        "tags": [
+          "sellers"
+        ],
+        "summary": "Get Seller Status",
+        "description": "Check if current user is an onboarded seller (read-only, no side effects).",
+        "operationId": "get_seller_status_v1_sellers_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/sellers/connect": {
       "post": {
         "tags": [
