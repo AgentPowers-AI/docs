@@ -9,19 +9,33 @@ Every skill and agent submission passes through a multi-layer security pipeline 
 
 ## Pipeline Stages
 
-### 1. Static Validation
+The pipeline runs 8 layers in sequence. Layers that don't apply (e.g., dependency scanning on a pure-markdown skill) are skipped gracefully.
 
-The first layer checks the submission package itself:
+### 1a. File Type Validation
 
-- **File type verification** -- Only allowed file types pass through
-- **Dangerous pattern scanning** -- Checks for shell commands, environment variable harvesting, obfuscation techniques
-- **Size limits** -- Packages must stay within size constraints
+Only allowed file types pass through. Disallowed extensions (executables, compiled binaries) are rejected immediately.
 
-### 2. Malware Detection
+### 1b. Pattern Scanning
 
-The package is scanned for known malware and malicious patterns.
+Checks for dangerous patterns: shell commands, environment variable harvesting, obfuscation techniques, and known attack signatures.
 
-### 3. AI Security Review
+### 1c. ClamAV Signature Scan
+
+A local ClamAV malware signature scan catches known malware before spending external API quota. Runs in ~200ms.
+
+### 1d. Dependency Vulnerability Scan
+
+Scans dependency manifests (requirements.txt, package.json, pyproject.toml) for known CVEs using Snyk. Skipped if no manifests are present.
+
+### 1e. Supply Chain Analysis
+
+GuardDog detects supply chain attacks that vulnerability scanners miss: typosquatting, dependency confusion, and install-time code execution.
+
+### 1f. VirusTotal Malware Scan
+
+The full package is uploaded to VirusTotal for scanning by 70+ antivirus engines. Results are polled with linear backoff.
+
+### 2. AI Security Review
 
 An AI-powered semantic analysis checks for:
 
@@ -30,7 +44,7 @@ An AI-powered semantic analysis checks for:
 - **Data exposure** -- Leaking user data or API keys
 - **Privilege escalation** -- Requesting unnecessary permissions
 
-### 4. Agent-Specific Checks
+### 3. Agent-Specific Checks
 
 Submissions of type `agent` receive additional scrutiny:
 
