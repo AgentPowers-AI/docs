@@ -16,6 +16,17 @@ curl -X POST "https://api.agentpowers.ai/v1/sellers/connect" \
 
 This returns an onboarding URL. Complete the form to enable payouts.
 
+### Check Seller Status
+
+To check whether the current user has completed seller onboarding:
+
+```bash
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.agentpowers.ai/v1/sellers/status"
+```
+
+Returns `is_seller` (true if onboarding is complete), `charges_enabled`, and `payouts_enabled`. This is a read-only endpoint with no side effects.
+
 ### Check Earnings
 
 ```bash
