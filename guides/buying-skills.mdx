@@ -242,6 +242,39 @@ curl -X POST "https://api.agentpowers.ai/v1/skills/my-skill/reviews" \
 - One review per user per skill (duplicate returns 409)
 - Archived skills cannot be reviewed (returns 404)
 
+## Managing Billing
+
+After your first purchase, you can manage payment methods, view invoices, and update billing details through the Stripe Customer Portal.
+
+### Via the Dashboard
+
+Navigate to **Dashboard > Settings > Billing** and click **Manage in Stripe**. This opens the Stripe Customer Portal where you can:
+
+- Update or remove payment methods
+- View and download invoices
+- Update billing information
+
+### Via the API
+
+Create a portal session programmatically:
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/billing/portal" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+Returns a redirect URL:
+
+```json
+{
+  "url": "https://billing.stripe.com/p/session/..."
+}
+```
+
+<Note>
+The billing portal is only available after your first purchase. If you haven't purchased anything yet, the endpoint returns a 404.
+</Note>
+
 ## ZIP Downloads (claude.ai Web)
 
 For claude.ai web users who cannot use the CLI, skills are available as ZIP downloads:
