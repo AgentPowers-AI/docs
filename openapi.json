@@ -1618,12 +1618,36 @@
         "summary": "Initiate Connect Onboarding",
         "description": "Create Stripe Connect account and return onboarding URL.",
         "operationId": "initiate_connect_onboarding_v1_sellers_connect_post",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "ISO 3166-1 alpha-2 country code",
+              "default": "US",
+              "title": "Country"
+            },
+            "description": "ISO 3166-1 alpha-2 country code"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
