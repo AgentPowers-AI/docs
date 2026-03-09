@@ -2606,6 +2606,17 @@
             ],
             "title": "Website Url"
           },
+          "github_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Url"
+          },
           "linkedin_url": {
             "anyOf": [
               {
@@ -2704,6 +2715,17 @@
               }
             ],
             "title": "Website Url"
+          },
+          "github_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Url"
           },
           "linkedin_url": {
             "anyOf": [
