@@ -2062,7 +2062,7 @@
           "detail"
         ],
         "summary": "Get Detail",
-        "description": "Get full detail for a skill by slug. Tries native DB first, then external sources.",
+        "description": "Get full detail for a skill by slug.\n\nTries native DB first, then external sources.",
         "operationId": "get_detail_v1_detail__slug__get",
         "parameters": [
           {
