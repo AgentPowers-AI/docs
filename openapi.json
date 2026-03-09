@@ -1457,7 +1457,7 @@
           "search"
         ],
         "summary": "Get Category Detail",
-        "description": "Get single category detail with subcategories.",
+        "description": "Get single category with skills in that category.",
         "operationId": "get_category_detail_v1_categories__slug__get",
         "parameters": [
           {
@@ -1467,6 +1467,29 @@
             "schema": {
               "type": "string",
               "title": "Slug"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
             }
           }
         ],
