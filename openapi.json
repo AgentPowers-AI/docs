@@ -2471,6 +2471,19 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "HoldAccountRequest": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "HoldAccountRequest"
+      },
       "InstallationRequest": {
         "properties": {
           "skill_slug": {
@@ -2962,6 +2975,30 @@
           "message"
         ],
         "title": "RedeemResponse"
+      },
+      "ResolveFlagRequest": {
+        "properties": {
+          "resolution": {
+            "type": "string",
+            "title": "Resolution"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "resolution"
+        ],
+        "title": "ResolveFlagRequest"
       },
       "ReviewCreate": {
         "properties": {

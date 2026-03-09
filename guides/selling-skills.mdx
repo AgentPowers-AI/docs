@@ -189,6 +189,22 @@ Outcomes:
 - **Minimum price for paid skills is $3.00**
 - AgentPowers takes a **10% platform fee**; you receive 90% via payouts
 
+### Seller Tiers and Price Caps
+
+New sellers start at Tier 0 with a **$25 maximum price** per skill. As you build a verified sales history, your tier upgrades automatically:
+
+| Tier | Requirements | Max Price | Payout Delay |
+|------|-------------|-----------|-------------|
+| Tier 0 (New) | Default | $25 | 14 days |
+| Tier 1 (Established) | 5+ sales AND 30+ days | $100 | 7 days |
+| Tier 2 (Trusted) | 20+ sales AND 90+ days | No limit | 2 days |
+
+Your current tier, payout delay, and price limit are returned in the `GET /v1/sellers/earnings` response.
+
+<Note>
+Payout delays protect both buyers and sellers. As your account builds trust, delays decrease automatically.
+</Note>
+
 ## Seller Dashboard
 
 Track your sales performance with dedicated seller endpoints (all require authentication).
