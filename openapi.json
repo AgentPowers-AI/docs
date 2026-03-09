@@ -46,46 +46,6 @@
         }
       }
     },
-    "/v1/auth/cli-token": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Exchange For Cli Token",
-        "description": "Exchange a Clerk JWT for a long-lived CLI token.",
-        "operationId": "exchange_for_cli_token_v1_auth_cli_token_post",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/auth/revoke-cli-token": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Revoke Current Cli Token",
-        "description": "Revoke the CLI token used in this request. Only accepts CLI tokens.",
-        "operationId": "revoke_current_cli_token_v1_auth_revoke_cli_token_post",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/billing/portal": {
       "post": {
         "tags": [
@@ -1532,26 +1492,6 @@
         }
       }
     },
-    "/v1/webhooks/stripe": {
-      "post": {
-        "tags": [
-          "webhooks"
-        ],
-        "summary": "Stripe Webhook",
-        "description": "Handle Stripe webhook events (payment confirmations).\n\nThis is async because we need ``await request.body()`` for raw bytes.\nStripe requires the raw payload for signature verification.",
-        "operationId": "stripe_webhook_v1_webhooks_stripe_post",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/claims/{claim_id}": {
       "get": {
         "tags": [
@@ -1984,164 +1924,6 @@
         }
       }
     },
-    "/v1/admin/claims/sandbox": {
-      "get": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "Review Sandboxed Claims",
-        "description": "List all sandboxed claims awaiting admin review.\n\nReturns every claim with status 'sandbox', joined with skill and user\ndata for display in the admin dashboard.\n\nArgs:\n    user: Authenticated admin caller.\n    db: Database connection.\n\nReturns:\n    dict with ``items`` (list of claim dicts) and ``total`` (int).",
-        "operationId": "review_sandboxed_claims_v1_admin_claims_sandbox_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Review Sandboxed Claims V1 Admin Claims Sandbox Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/admin/claims/{claim_id}/approve": {
-      "post": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "Approve Claim",
-        "description": "Approve a sandboxed claim, transferring skill ownership to the claimant.\n\nLooks up the claim, validates it is in 'sandbox' state, then atomically:\n- Sets ``claims.status`` to ``'approved'`` and records ``reviewed_at``.\n- Sets ``skills.claimed = TRUE`` and ``skills.author_id`` to the claimant.\n\nArgs:\n    claim_id: Primary key of the claim to approve.\n    user: Authenticated admin caller.\n    db: Database connection.\n\nReturns:\n    dict with ``id``, ``status``, and ``message``.\n\nRaises:\n    HTTPException 404: Claim does not exist.\n    HTTPException 400: Claim is not in 'sandbox' state.",
-        "operationId": "approve_claim_v1_admin_claims__claim_id__approve_post",
-        "parameters": [
-          {
-            "name": "claim_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Claim Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Approve Claim V1 Admin Claims  Claim Id  Approve Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/admin/abuse/flagged": {
-      "get": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "List Flagged Accounts",
-        "description": "List accounts flagged for potential hostname abuse.",
-        "operationId": "list_flagged_accounts_v1_admin_abuse_flagged_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/admin/accounts/held": {
-      "get": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "List Held Accounts",
-        "description": "Review held accounts.\n\nReturns:\n    Placeholder response until held-account logic is implemented.",
-        "operationId": "list_held_accounts_v1_admin_accounts_held_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response List Held Accounts V1 Admin Accounts Held Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/admin/accounts/{account_id}/release": {
-      "post": {
-        "tags": [
-          "admin"
-        ],
-        "summary": "Release Account",
-        "description": "Release a held account.\n\nArgs:\n    account_id: The account to release.\n\nReturns:\n    Placeholder response until release logic is implemented.",
-        "operationId": "release_account_v1_admin_accounts__account_id__release_post",
-        "parameters": [
-          {
-            "name": "account_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Account Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Release Account V1 Admin Accounts  Account Id  Release Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/installations": {
       "post": {
         "tags": [
@@ -2167,65 +1949,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InstallationResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/security/scan/{slug}": {
-      "post": {
-        "tags": [
-          "security"
-        ],
-        "summary": "Trigger Scan",
-        "description": "Trigger a security scan for a skill.\n\nOnly the skill author can trigger scans. When version is specified,\nscans the version-specific package and promotes or blocks the version.",
-        "operationId": "trigger_scan_v1_security_scan__slug__post",
-        "parameters": [
-          {
-            "name": "slug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Slug"
-            }
-          },
-          {
-            "name": "version",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Version"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SecurityScanResponse"
                 }
               }
             }
@@ -2270,87 +1993,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/SecurityResultsResponse"
                 }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/security/check/{content_hash}": {
-      "get": {
-        "tags": [
-          "security"
-        ],
-        "summary": "Check Scan Cache",
-        "description": "Check scan cache for a content hash. Returns cached result or 404.",
-        "operationId": "check_scan_cache_v1_security_check__content_hash__get",
-        "parameters": [
-          {
-            "name": "content_hash",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Content Hash"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/security/scan-package": {
-      "post": {
-        "tags": [
-          "security"
-        ],
-        "summary": "Scan External Package",
-        "description": "Upload an external skill package for security scanning.\n\nRuns the full security pipeline, caches the result by content hash,\nand returns the verdict.\n\nSECURITY: The server computes the content hash from the uploaded\nZIP contents. The client-supplied content_hash field is ignored.\nThis prevents hash-spoofing attacks where a client uploads benign\ncontent with a forged hash to poison the scan cache.",
-        "operationId": "scan_external_package_v1_security_scan_package_post",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_scan_external_package_v1_security_scan_package_post"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
               }
             }
           },
@@ -4088,5 +3730,11 @@
         "title": "ValidationError"
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "https://api.agentpowers.ai",
+      "description": "Production"
+    }
+  ]
 }
