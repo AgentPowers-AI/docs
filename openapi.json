@@ -2175,6 +2175,68 @@
         }
       }
     },
+    "/v1/users/notifications": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get Notification Preferences",
+        "description": "Return current notification preferences. Defaults if no row exists.",
+        "operationId": "get_notification_preferences_v1_users_notifications_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPreferences"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update Notification Preferences",
+        "description": "Upsert notification preferences. Only updates provided fields.",
+        "operationId": "update_notification_preferences_v1_users_notifications_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationPreferencesUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPreferences"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/skills/{slug}/reviews": {
       "post": {
         "tags": [
@@ -2589,6 +2651,68 @@
           "platform"
         ],
         "title": "InstallationResponse"
+      },
+      "NotificationPreferences": {
+        "properties": {
+          "purchase_receipts": {
+            "type": "boolean",
+            "title": "Purchase Receipts",
+            "default": true
+          },
+          "payout_notifications": {
+            "type": "boolean",
+            "title": "Payout Notifications",
+            "default": true
+          },
+          "marketing_emails": {
+            "type": "boolean",
+            "title": "Marketing Emails",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "NotificationPreferences",
+        "description": "Notification preference settings."
+      },
+      "NotificationPreferencesUpdate": {
+        "properties": {
+          "purchase_receipts": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Receipts"
+          },
+          "payout_notifications": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payout Notifications"
+          },
+          "marketing_emails": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Marketing Emails"
+          }
+        },
+        "type": "object",
+        "title": "NotificationPreferencesUpdate",
+        "description": "Partial update for notification preferences."
       },
       "ProfileResponse": {
         "properties": {
