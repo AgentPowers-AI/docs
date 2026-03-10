@@ -25,6 +25,23 @@ ap logout    # Clear stored token
 
 The CLI uses long-lived tokens stored locally with restricted permissions, so you rarely need to re-login.
 
+## Profile Management
+
+Before you can publish a skill, you need a username. Set it with `ap profile --set`:
+
+```bash
+ap profile          # View your current profile
+ap profile --set    # Interactively set username, display name, and bio
+```
+
+**View** shows your username, display name, email, bio, and join date. If no username is set, a hint and suggested username (based on your GitHub handle) are shown.
+
+**Set** prompts for each field — if a username is already taken or invalid, the CLI loops and re-prompts until one is accepted. Press `Ctrl-C` to cancel.
+
+<Tip>
+`ap publish` will automatically prompt you to set a username inline if you haven't done so yet — no need to run `ap profile --set` separately.
+</Tip>
+
 ## Searching
 
 ```bash
@@ -229,6 +246,8 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap login` | Authenticate via browser OAuth |
 | `ap logout` | Clear stored credentials |
 | `ap whoami` | Show current user |
+| `ap profile` | View your seller profile (username, display name, bio) |
+| `ap profile --set` | Interactively update username, display name, and bio |
 | `ap search <query>` | Search the marketplace (unified, sectioned results) |
 | `ap detail <slug>` | View skill or agent details (`--source`, `--scan` flags) |
 | `ap install <slug>` | Install a skill (`--code`, `--source` flags) |
