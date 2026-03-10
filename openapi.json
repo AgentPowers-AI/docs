@@ -1596,7 +1596,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SellerListResponse"
+                }
               }
             }
           },
@@ -1913,7 +1915,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SellerPublicProfile"
+                }
               }
             }
           },
@@ -3477,6 +3481,205 @@
         ],
         "title": "SecurityScanResponse",
         "description": "Response from triggering a security scan."
+      },
+      "SellerListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SellerPublicProfile"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "SellerListResponse"
+      },
+      "SellerPublicProfile": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          },
+          "github_username": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Username"
+          },
+          "bio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bio"
+          },
+          "website_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url"
+          },
+          "github_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Github Url"
+          },
+          "linkedin_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Linkedin Url"
+          },
+          "twitter_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Twitter Url"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          },
+          "joined_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Joined At"
+          },
+          "total_skills": {
+            "type": "integer",
+            "title": "Total Skills"
+          },
+          "total_downloads": {
+            "type": "integer",
+            "title": "Total Downloads"
+          },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/SellerSkillPreview"
+            },
+            "type": "array",
+            "title": "Skills",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "verified",
+          "total_skills",
+          "total_downloads"
+        ],
+        "title": "SellerPublicProfile"
+      },
+      "SellerSkillPreview": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "price_cents": {
+            "type": "integer",
+            "title": "Price Cents"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "security_status": {
+            "type": "string",
+            "title": "Security Status"
+          },
+          "download_count": {
+            "type": "integer",
+            "title": "Download Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "title",
+          "price_cents",
+          "currency",
+          "version",
+          "security_status",
+          "download_count"
+        ],
+        "title": "SellerSkillPreview"
       },
       "SkillDetail": {
         "properties": {
