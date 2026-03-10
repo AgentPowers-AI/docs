@@ -2237,6 +2237,74 @@
         }
       }
     },
+    "/v1/users/me": {
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Delete Account",
+        "description": "Request account deletion with 30-day grace period.\n\nRequires confirmation string \"delete my account\".\nReturns 409 if blockers exist, 403 if account is held.",
+        "operationId": "delete_account_v1_users_me_delete",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Delete Account V1 Users Me Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/me/cancel-deletion": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Cancel Account Deletion",
+        "description": "Cancel a pending account deletion.",
+        "operationId": "cancel_account_deletion_v1_users_me_cancel_deletion_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Cancel Account Deletion V1 Users Me Cancel Deletion Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/skills/{slug}/reviews": {
       "post": {
         "tags": [
@@ -2567,6 +2635,20 @@
         ],
         "title": "ClaimResponse"
       },
+      "DeletionRequest": {
+        "properties": {
+          "confirmation": {
+            "type": "string",
+            "title": "Confirmation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "confirmation"
+        ],
+        "title": "DeletionRequest",
+        "description": "Request body for account deletion."
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -2844,6 +2926,28 @@
               }
             ],
             "title": "Username Suggestion"
+          },
+          "account_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Status"
+          },
+          "deletion_scheduled_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deletion Scheduled At"
           }
         },
         "type": "object",
