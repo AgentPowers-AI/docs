@@ -1891,22 +1891,22 @@
         }
       }
     },
-    "/v1/sellers/{username}": {
+    "/v1/sellers/{slug}": {
       "get": {
         "tags": [
           "sellers"
         ],
         "summary": "Get Seller Profile",
-        "description": "Get public seller profile by username.",
-        "operationId": "get_seller_profile_v1_sellers__username__get",
+        "description": "Get public seller profile by display_name_slug.",
+        "operationId": "get_seller_profile_v1_sellers__slug__get",
         "parameters": [
           {
-            "name": "username",
+            "name": "slug",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Username"
+              "title": "Slug"
             }
           }
         ],
@@ -1934,22 +1934,22 @@
         }
       }
     },
-    "/v1/sellers/{username}/skills": {
+    "/v1/sellers/{slug}/skills": {
       "get": {
         "tags": [
           "sellers"
         ],
         "summary": "Get Seller Public Skills",
         "description": "Get a seller's public skills list.",
-        "operationId": "get_seller_public_skills_v1_sellers__username__skills_get",
+        "operationId": "get_seller_public_skills_v1_sellers__slug__skills_get",
         "parameters": [
           {
-            "name": "username",
+            "name": "slug",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Username"
+              "title": "Slug"
             }
           }
         ],
@@ -2143,7 +2143,7 @@
           "users"
         ],
         "summary": "Update Profile",
-        "description": "Update current user's profile.\n\nFor username: checks uniqueness with case-insensitive comparison.\nReturns 409 if username is taken.",
+        "description": "Update current user's profile.\n\nWhen display_name changes, recomputes display_name_slug via update_slug().",
         "operationId": "update_profile_v1_users_profile_patch",
         "requestBody": {
           "content": {
@@ -2806,7 +2806,7 @@
             "type": "string",
             "title": "Id"
           },
-          "username": {
+          "display_name_slug": {
             "anyOf": [
               {
                 "type": "string"
@@ -2815,7 +2815,7 @@
                 "type": "null"
               }
             ],
-            "title": "Username"
+            "title": "Display Name Slug"
           },
           "display_name": {
             "anyOf": [
@@ -2920,17 +2920,6 @@
             ],
             "title": "Avatar Url"
           },
-          "username_suggestion": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Username Suggestion"
-          },
           "account_status": {
             "anyOf": [
               {
@@ -2964,17 +2953,6 @@
       },
       "ProfileUpdate": {
         "properties": {
-          "username": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Username"
-          },
           "display_name": {
             "anyOf": [
               {
@@ -3505,9 +3483,9 @@
       },
       "SellerPublicProfile": {
         "properties": {
-          "username": {
+          "display_name_slug": {
             "type": "string",
-            "title": "Username"
+            "title": "Display Name Slug"
           },
           "display_name": {
             "anyOf": [
@@ -3631,7 +3609,7 @@
         },
         "type": "object",
         "required": [
-          "username",
+          "display_name_slug",
           "verified",
           "total_skills",
           "total_downloads"
