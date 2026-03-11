@@ -38,27 +38,22 @@ Returns total earnings and sale count.
 
 ## Setting Up Your Profile
 
-### Username Requirement
+### Display Name Requirement
 
-Before publishing, you must set a username on your profile. Publishing without a username returns a `400 USERNAME_REQUIRED` error.
+Before publishing, you must set a display name on your profile. Publishing without a display name returns a `400 DISPLAY_NAME_REQUIRED` error.
 
-Set your username via the API:
+Set your display name via the API:
 
 ```bash
 curl -X PATCH "https://api.agentpowers.ai/v1/users/profile" \
   -H "Authorization: Bearer TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"username": "my-username"}'
+  -d '{"display_name": "My Name"}'
 ```
 
-Username rules:
+Your display name is automatically slugified into a URL-safe profile path (e.g. `"John Doe"` → `/sellers/john-doe`). If your chosen display name conflicts with an existing slug, a number suffix is appended automatically (`john-doe-2`).
 
-- 3-30 characters, lowercase alphanumeric and hyphens only
-- No leading or trailing hyphens
-- Case-insensitive uniqueness (e.g., `My-Name` and `my-name` conflict)
-- Reserved words (like `admin`, `api`, `support`) are blocked
-
-Check your current profile (including a suggested username based on your GitHub account):
+Check your current profile:
 
 ```bash
 curl -H "Authorization: Bearer TOKEN" \
@@ -71,7 +66,7 @@ You can also update your bio and social links:
 curl -X PATCH "https://api.agentpowers.ai/v1/users/profile" \
   -H "Authorization: Bearer TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"username": "my-username", "bio": "I build great skills", "website_url": "https://example.com", "linkedin_url": "https://linkedin.com/in/username", "twitter_url": "https://twitter.com/username"}'
+  -d '{"display_name": "My Name", "bio": "I build great skills", "website_url": "https://example.com"}'
 ```
 
 ## Publishing a Skill
@@ -257,8 +252,8 @@ curl -H "Authorization: Bearer TOKEN" \
 Your public profile is available at:
 
 ```bash
-curl "https://api.agentpowers.ai/v1/sellers/my-username"
-curl "https://api.agentpowers.ai/v1/sellers/my-username/skills"
+curl "https://api.agentpowers.ai/v1/sellers/my-name"
+curl "https://api.agentpowers.ai/v1/sellers/my-name/skills"
 ```
 
 These are public endpoints -- no authentication required for viewers.

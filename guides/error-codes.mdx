@@ -36,7 +36,7 @@ The HTTP status code indicates the error category. The `code` field enables prec
 | `SKILL_NOT_OWNER` | 403 | You attempted to modify a skill you do not own. |
 | `SKILL_ARCHIVED` | 400 | The skill has been unpublished. Use `POST /v1/skills/{slug}/republish` to restore it. |
 | `SKILL_VERSION_PENDING` | 409 | A new version is already pending security review. Wait for it to complete. |
-| `USERNAME_REQUIRED` | 400 | You must set a username before publishing. Update your profile first via `PATCH /v1/users/profile`. |
+| `DISPLAY_NAME_REQUIRED` | 400 | You must set a display name before publishing. Update your profile first via `PATCH /v1/users/profile`. |
 
 ## Purchase Errors
 
@@ -67,7 +67,7 @@ The HTTP status code indicates the error category. The `code` field enables prec
 
 | Code | HTTP Status | Description |
 |------|-------------|-------------|
-| `USERNAME_TAKEN` | 409 | The requested username is already in use. Choose another. |
+| `DISPLAY_NAME_REQUIRED` | 400 | A display name is required to publish, review, or claim. Set one via `PATCH /v1/users/profile`. |
 | `VALIDATION_ERROR` | 422 | Input validation failed. Check the error detail for specifics. |
 
 ## General Errors
