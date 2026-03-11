@@ -2450,7 +2450,7 @@
             ],
             "title": "Github Username"
           },
-          "username": {
+          "display_name_slug": {
             "anyOf": [
               {
                 "type": "string"
@@ -2459,7 +2459,7 @@
                 "type": "null"
               }
             ],
-            "title": "Username"
+            "title": "Display Name Slug"
           },
           "avatar_url": {
             "anyOf": [
