@@ -36,6 +36,7 @@
           {
             "group": "Reference",
             "pages": [
+              "guides/account-deletion",
               "guides/error-codes",
               "guides/rate-limits",
               "guides/roadmap"

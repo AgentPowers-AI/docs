@@ -1,0 +1,112 @@
+---
+title: Account Deletion
+description: How to delete your AgentPowers account and what happens to your data
+---
+
+## Overview
+
+Account deletion is a **30-day soft-delete**. When you request deletion, your account is scheduled to be permanently deleted 30 days later. You can cancel at any time during this window.
+
+## Requesting Deletion
+
+### Via the Dashboard
+
+1. Go to **Dashboard → Settings → Account**
+2. Scroll to the **Danger Zone** section
+3. Click **Delete Account**
+4. Type `delete my account` to confirm
+5. Click **Schedule Deletion**
+
+Your account is now scheduled. You will receive a confirmation email.
+
+### Via the API
+
+```bash
+curl -X DELETE "https://api.agentpowers.ai/v1/users/me" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"confirmation": "delete my account"}'
+```
+
+Returns:
+
+```json
+{
+  "message": "Account deletion scheduled.",
+  "scheduled_at": "2026-04-11T00:00:00Z"
+}
+```
+
+## Cancelling Deletion
+
+Sign in to your account at any point before the deletion date to automatically cancel the request, or cancel explicitly:
+
+### Via the Dashboard
+
+Return to **Settings → Account** and click **Cancel Deletion**.
+
+### Via the API
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/users/me/cancel-deletion" \
+  -H "Authorization: Bearer TOKEN"
+```
+
+<Note>
+Signing in before the deletion date automatically cancels the request — you don't need to do anything extra.
+</Note>
+
+## What Happens to Your Data
+
+### During the 30-day grace period
+
+- Your account is hidden from the marketplace (profile, skills not listed)
+- Existing buyers retain access to skills they purchased
+- You cannot publish new skills or submit reviews
+
+### At deletion (day 30)
+
+| Data | Outcome |
+|------|---------|
+| Profile (name, bio, avatar) | Anonymized |
+| Email address | Removed |
+| Published skills | Archived (buyers retain access) |
+| Purchase records | Retained for 7 years (IRS compliance) |
+| Stripe seller account | Not deleted — managed via Stripe Connect |
+| Pending payouts | Processed before purge |
+
+<Warning>
+Financial records (purchases, payouts, Stripe IDs) are retained for 7 years to meet legal and tax requirements. All personal identifiers are removed from these records.
+</Warning>
+
+## Blockers
+
+Deletion may be delayed if:
+
+- You have **pending payouts** that haven't cleared yet — wait for the payout to process
+- You have **in-progress purchases** — wait for checkout to complete
+
+The API returns a `400` with a `DELETION_BLOCKED` code if a blocker is detected. Resolve the blocker and retry.
+
+## Email Reminders
+
+You will receive:
+
+1. **Confirmation email** immediately after scheduling
+2. **Reminder email** 3 days before the deletion date
+
+If you don't receive these emails, check your spam folder or contact support.
+
+## Frequently Asked Questions
+
+**Can I recover my account after 30 days?**
+No. Once the grace period passes and your account is purged, recovery is not possible.
+
+**What happens to skills I published?**
+Your skills are archived and hidden from the marketplace. Buyers who already purchased them retain download access, but the skills cannot be discovered or purchased by new users.
+
+**What happens to my Stripe Connect account?**
+Your Stripe Connect account is not automatically deleted. Log in to Stripe to manage it directly. Pending payouts are processed before your account data is purged.
+
+**Can I create a new account with the same email after deletion?**
+Yes, once your account is fully purged you can sign up again with the same email address.
