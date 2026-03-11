@@ -1437,7 +1437,7 @@
           "search"
         ],
         "summary": "Get Categories",
-        "description": "Get category index (compact, for plugin injection).",
+        "description": "Get categories dynamically from published skills.",
         "operationId": "get_categories_v1_categories_get",
         "responses": {
           "200": {
@@ -3979,6 +3979,17 @@
           "description": {
             "type": "string",
             "title": "Description"
+          },
+          "long_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Long Description"
           },
           "category": {
             "type": "string",
