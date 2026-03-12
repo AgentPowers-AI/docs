@@ -118,6 +118,18 @@ GET /v1/purchases/confirm?session_id=cs_live_...
 
 This endpoint verifies the Stripe session and returns the purchase record with license code.
 
+### Direct Download
+
+After checkout is confirmed, the success page shows a **Download files** button. You can also fetch the package directly:
+
+```text
+GET /v1/purchases/download?session_id=cs_live_...
+```
+
+Returns `{ url, slug }` where `url` is an R2 presigned download link (valid for 1 hour). No auth header required — the Stripe session ID acts as the bearer token.
+
+Returns `403` if the payment webhook hasn't fired yet (try again in a few seconds).
+
 ### License Codes
 
 Each purchase generates a license code (`XXXX-XXXX-XXXX` format). Use it to install on another machine:
