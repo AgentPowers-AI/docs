@@ -1981,7 +1981,7 @@
           "installations"
         ],
         "summary": "Record Installation",
-        "description": "Record a skill installation for abuse tracking.",
+        "description": "Record a skill installation for abuse tracking.\n\n- Authenticated + agentpowers: full record with skill_id + purchase_id\n- Authenticated + external: record with skill_id = NULL\n- Unauthenticated + external: silent no-op (200, not tracked)\n- Unauthenticated + agentpowers: record anonymously (no user_id)",
         "operationId": "record_installation_v1_installations_post",
         "requestBody": {
           "content": {
@@ -2681,9 +2681,9 @@
       },
       "InstallationRequest": {
         "properties": {
-          "skill_slug": {
+          "source_slug": {
             "type": "string",
-            "title": "Skill Slug"
+            "title": "Source Slug"
           },
           "hostname": {
             "type": "string",
@@ -2693,13 +2693,19 @@
           },
           "platform": {
             "type": "string",
-            "pattern": "^(code|cowork|web)$",
+            "pattern": "^(code|cowork|web|cli|mcp)$",
             "title": "Platform"
+          },
+          "source": {
+            "type": "string",
+            "pattern": "^(agentpowers|clawhub)$",
+            "title": "Source",
+            "default": "agentpowers"
           }
         },
         "type": "object",
         "required": [
-          "skill_slug",
+          "source_slug",
           "hostname",
           "platform"
         ],
@@ -2711,9 +2717,9 @@
             "type": "string",
             "title": "Id"
           },
-          "skill_slug": {
+          "source_slug": {
             "type": "string",
-            "title": "Skill Slug"
+            "title": "Source Slug"
           },
           "hostname": {
             "type": "string",
@@ -2722,6 +2728,10 @@
           "platform": {
             "type": "string",
             "title": "Platform"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
           },
           "message": {
             "type": "string",
@@ -2732,9 +2742,10 @@
         "type": "object",
         "required": [
           "id",
-          "skill_slug",
+          "source_slug",
           "hostname",
-          "platform"
+          "platform",
+          "source"
         ],
         "title": "InstallationResponse"
       },
