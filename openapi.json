@@ -1200,6 +1200,50 @@
         }
       }
     },
+    "/v1/purchases/download": {
+      "get": {
+        "tags": [
+          "purchases"
+        ],
+        "summary": "Download Purchased Skill",
+        "description": "Return a download URL for a completed purchase by Stripe session ID.\n\nNo auth required \u2014 session_id is an unguessable bearer token.\nReturns 403 if the webhook has not yet fired (status != 'completed').",
+        "operationId": "download_purchased_skill_v1_purchases_download_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillDownloadResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/purchases": {
       "get": {
         "tags": [
