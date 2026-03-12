@@ -60,7 +60,7 @@ The MCP plugin shares the same auth token stored by the CLI. Log in once with th
 | `POST /v1/checkout` | Yes |
 | `GET /v1/purchases` | Yes |
 | `GET /v1/purchases/confirm` | Yes |
-| `POST /v1/installations` | Yes |
+| `POST /v1/installations` | Optional (anonymous external installs are silently ignored) |
 | `POST /v1/skills/{slug}/reviews` | Yes |
 | `GET /v1/skills/{slug}/reviews` | No |
 | `GET /v1/users/profile` | Yes |
