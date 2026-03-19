@@ -85,11 +85,27 @@ curl "https://api.agentpowers.ai/v1/search?q=&sort=downloads&price_filter=free&t
 
 ### Categories
 
-Browse by category:
+There are 7 canonical categories. All always appear in the response even when empty:
+
+| Slug | Name | Icon |
+|------|------|------|
+| `marketing` | Marketing | megaphone |
+| `development` | Development | code |
+| `productivity` | Productivity | zap |
+| `design` | Design | palette |
+| `sales` | Sales | trending-up |
+| `data` | Data | bar-chart |
+| `security` | Security | shield |
 
 ```bash
+# List all categories with live skill counts
 curl "https://api.agentpowers.ai/v1/categories"
+
+# Get a specific category with its skills
+curl "https://api.agentpowers.ai/v1/categories/development"
 ```
+
+Each category object includes `name`, `description`, `icon`, `sample_keywords`, and `count`.
 
 ## Installing Free Skills
 
