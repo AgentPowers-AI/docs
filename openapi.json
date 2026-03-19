@@ -1481,65 +1481,14 @@
           "search"
         ],
         "summary": "Get Categories",
-        "description": "Get all 7 canonical categories with live skill counts. All categories always appear even when no skills exist. Each category includes name, description, icon, and count.",
+        "description": "Get all canonical categories with live skill counts.",
         "operationId": "get_categories_v1_categories_get",
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "category": {
-                            "type": "string",
-                            "example": "development"
-                          },
-                          "name": {
-                            "type": "string",
-                            "example": "Development"
-                          },
-                          "description": {
-                            "type": "string",
-                            "example": "Testing, CI/CD, code review, debugging, refactoring, and developer productivity skills."
-                          },
-                          "icon": {
-                            "type": "string",
-                            "example": "code"
-                          },
-                          "sample_keywords": {
-                            "type": "string",
-                            "example": "code review, testing, CI/CD"
-                          },
-                          "count": {
-                            "type": "integer",
-                            "example": 12
-                          }
-                        },
-                        "required": [
-                          "category",
-                          "name",
-                          "description",
-                          "icon",
-                          "count"
-                        ]
-                      }
-                    },
-                    "total_count": {
-                      "type": "integer",
-                      "example": 47
-                    }
-                  },
-                  "required": [
-                    "categories",
-                    "total_count"
-                  ]
-                }
+                "schema": {}
               }
             }
           }
@@ -1552,7 +1501,7 @@
           "search"
         ],
         "summary": "Get Category Detail",
-        "description": "Get a single canonical category with full metadata and its skills. Returns 404 for unrecognized category slugs.",
+        "description": "Get single category with full metadata and skills.",
         "operationId": "get_category_detail_v1_categories__slug__get",
         "parameters": [
           {
@@ -1593,66 +1542,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "category": {
-                      "type": "string",
-                      "example": "marketing"
-                    },
-                    "name": {
-                      "type": "string",
-                      "example": "Marketing"
-                    },
-                    "description": {
-                      "type": "string"
-                    },
-                    "icon": {
-                      "type": "string",
-                      "example": "megaphone"
-                    },
-                    "sample_keywords": {
-                      "type": "string"
-                    },
-                    "count": {
-                      "type": "integer"
-                    },
-                    "skills": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "slug": {
-                            "type": "string"
-                          },
-                          "title": {
-                            "type": "string"
-                          },
-                          "description": {
-                            "type": "string"
-                          },
-                          "price_cents": {
-                            "type": "integer"
-                          },
-                          "currency": {
-                            "type": "string"
-                          },
-                          "security_status": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "required": [
-                    "category",
-                    "name",
-                    "description",
-                    "icon",
-                    "count",
-                    "skills"
-                  ]
-                }
+                "schema": {}
               }
             }
           },
@@ -1665,9 +1555,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Category not found"
           }
         }
       }
