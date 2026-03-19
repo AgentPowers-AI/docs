@@ -1481,7 +1481,7 @@
           "search"
         ],
         "summary": "Get Categories",
-        "description": "Get categories dynamically from published skills.",
+        "description": "Get all canonical categories with live skill counts.",
         "operationId": "get_categories_v1_categories_get",
         "responses": {
           "200": {
@@ -1501,7 +1501,7 @@
           "search"
         ],
         "summary": "Get Category Detail",
-        "description": "Get single category with skills in that category.",
+        "description": "Get single category with full metadata and skills.",
         "operationId": "get_category_detail_v1_categories__slug__get",
         "parameters": [
           {
