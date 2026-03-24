@@ -3826,13 +3826,6 @@
             "type": "integer",
             "title": "Download Count"
           },
-          "platforms": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Platforms"
-          },
           "published_at": {
             "anyOf": [
               {
@@ -3889,8 +3882,7 @@
           "version",
           "security_status",
           "security_score",
-          "download_count",
-          "platforms"
+          "download_count"
         ],
         "title": "SkillDetail"
       },
