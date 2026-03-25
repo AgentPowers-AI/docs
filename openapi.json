@@ -3253,9 +3253,9 @@
         "properties": {
           "license_code": {
             "type": "string",
-            "maxLength": 14,
+            "maxLength": 26,
             "minLength": 14,
-            "pattern": "^[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}$",
+            "pattern": "^[A-F0-9]{4,8}-[A-F0-9]{4,8}-[A-F0-9]{4,8}$",
             "title": "License Code"
           }
         },
@@ -3895,6 +3895,17 @@
           "slug": {
             "type": "string",
             "title": "Slug"
+          },
+          "license_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "License Code"
           }
         },
         "type": "object",

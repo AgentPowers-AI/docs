@@ -142,16 +142,19 @@ After checkout is confirmed, the success page shows a **Download files** button.
 GET /v1/purchases/download?session_id=cs_live_...
 ```
 
-Returns `{ url, slug }` where `url` is an R2 presigned download link (valid for 1 hour). No auth header required — the Stripe session ID acts as the bearer token.
+Returns `{ url, slug, license_code }` where `url` is an R2 presigned download link (valid
+for 1 hour) and `license_code` is the purchase license code. No auth header required —
+the Stripe session ID acts as the bearer token.
 
 Returns `403` if the payment webhook hasn't fired yet (try again in a few seconds).
 
 ### License Codes
 
-Each purchase generates a license code (`XXXX-XXXX-XXXX` format). Use it to install on another machine:
+Each purchase generates a license code (`XXXXXXXX-XXXXXXXX-XXXXXXXX` format, 26 characters).
+Use it to install on another machine:
 
 ```bash
-ap install paid-skill --code ABCD-EFGH-IJKL
+ap install paid-skill --code A1B2C3D4-E5F6A7B8-C9D0E1F2
 ```
 
 Or redeem via the API:
@@ -160,7 +163,7 @@ Or redeem via the API:
 curl -X POST "https://api.agentpowers.ai/v1/purchases/redeem" \
   -H "Authorization: Bearer TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"license_code": "ABCD-EFGH-IJKL"}'
+  -d '{"license_code": "A1B2C3D4-E5F6A7B8-C9D0E1F2"}'
 ```
 
 ## Checking Purchases
