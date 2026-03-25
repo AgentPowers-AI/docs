@@ -160,23 +160,6 @@
             }
           },
           {
-            "name": "platform",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Platform"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -715,23 +698,6 @@
                 }
               ],
               "title": "Security Status"
-            }
-          },
-          {
-            "name": "platform",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Platform"
             }
           },
           {
@@ -3995,18 +3961,6 @@
             "minimum": 0.0,
             "title": "Price Cents",
             "default": 0
-          },
-          "platforms": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Platforms",
-            "default": [
-              "code",
-              "cowork",
-              "web"
-            ]
           }
         },
         "type": "object",
