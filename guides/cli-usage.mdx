@@ -116,6 +116,20 @@ ap install ontology --source clawhub
 
 External skills are downloaded to a sandbox, hashed, scanned through the full security pipeline, and only installed if they pass. See the [External Skills guide](/guides/external-skills) for details.
 
+### Multi-Tool Install
+
+Install for a specific AI tool using `--for`:
+
+```bash
+ap install my-skill                          # default: claude-code (~/.claude/skills/)
+ap install my-skill --for codex              # installs to ~/.codex/skills/
+ap install my-skill --for claude-code        # explicit claude-code target
+ap install my-skill --global                 # force global install (skip project-local)
+ap install my-skill --for codex --global     # global codex install
+```
+
+When run from a directory with a `.claude/` folder, `ap install` installs project-locally to `<cwd>/.claude/skills/` instead of `~/.claude/skills/`. Use `--global` to override this behavior.
+
 ## Publishing
 
 ### 1. Create Your Skill
@@ -250,7 +264,7 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap profile --set` | Interactively update display name and bio |
 | `ap search <query>` | Search the marketplace (unified, sectioned results) |
 | `ap detail <slug>` | View skill or agent details (`--source`, `--scan` flags) |
-| `ap install <slug>` | Install a skill (`--code`, `--source` flags) |
+| `ap install <slug>` | Install a skill (`--code`, `--source`, `--for`, `--global` flags) |
 | `ap publish <path>` | Publish or update a skill (`--price`, `--bump`, `--version`, `--changelog` flags) |
 | `ap update [slug]` | Update installed skills to latest versions (`--force` flag) |
 | `ap scan <slug>` | Scan an external skill without installing |
