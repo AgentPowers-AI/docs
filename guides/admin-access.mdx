@@ -19,6 +19,14 @@ Admin capabilities include:
 - **Account deletion** -- view pending deletions and cancel them on behalf of users
 - **Marketing email** -- send marketing emails to opted-in users
 
+<Note>
+**Dashboard UI vs API-only:** Only **user management** has a frontend dashboard UI (at `/dashboard/admin`). All other admin features (abuse flags, categories, refunds, marketing email, pending deletions, claim review, admin promotions) are **API-only** and must be accessed via curl or an HTTP client.
+</Note>
+
+<Note>
+**Hidden from OpenAPI spec:** All admin endpoints use `include_in_schema=False`, meaning they do not appear in the public OpenAPI documentation or auto-generated API reference. This page is the canonical reference for admin API usage.
+</Note>
+
 ## Bootstrapping the First Admin
 
 The API promotion endpoint (`POST /v1/admin/admins/{user_id}`) requires an existing admin to call it, so the very first admin must be set directly via SQL.
@@ -109,6 +117,50 @@ The platform automatically flags suspicious activity (e.g., buyer-seller bursts)
 - `POST /v1/admin/abuse/hold-account/{user_id}` -- freeze a user account for investigation
 - `POST /v1/admin/abuse/release-account/{user_id}` -- release a held account
 
+#### Resolve an Abuse Flag
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/abuse/{flag_id}/resolve" \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resolution": "resolved_legit",
+    "notes": "Reviewed transaction history, activity is legitimate."
+  }'
+```
+
+**Request body (`ResolveFlagRequest`):**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `resolution` | string | Yes | Resolution status. Use `resolved_legit` or `resolved_fraud`. |
+| `notes` | string | No | Optional notes explaining the resolution decision. |
+
+**Response:** Returns the updated flag object with `id`, `flag_type`, `reference_id`, `reference_type`, `details`, `status`, `resolved_by`, `resolved_at`, `resolution_notes`, and `created_at`.
+
+#### Hold a User Account
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/abuse/hold-account/{user_id}" \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reason": "Suspected fraudulent purchase pattern"
+  }'
+```
+
+**Request body (`HoldAccountRequest`):**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `reason` | string | Yes | Reason for holding the account. Stored in the audit log. |
+
+**Response:**
+
+```json
+{"status": "held", "user_id": "user_xxxxx"}
+```
+
 ### Category Management
 
 - `GET /v1/admin/categories` -- list all categories
@@ -116,11 +168,128 @@ The platform automatically flags suspicious activity (e.g., buyer-seller bursts)
 - `PUT /v1/admin/categories/{slug}` -- update category metadata (name, description, icon, keywords)
 - `DELETE /v1/admin/categories/{slug}` -- delete a category (blocked if active skills reference it)
 
+#### Create a Category
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/categories" \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Developer Tools",
+    "description": "Skills for building and debugging software",
+    "icon": "code",
+    "sample_keywords": "debug, lint, test, build"
+  }'
+```
+
+**Request body (`CategoryCreateRequest`):**
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `name` | string | Yes | -- | Display name. The URL slug is auto-generated from this. |
+| `description` | string | No | `""` | Short description of the category. |
+| `icon` | string | No | `"grid"` | Lucide icon name. See valid icons below. |
+| `sample_keywords` | string | No | `""` | Comma-separated keywords for discovery. |
+
+**Valid icons:** `bar-chart`, `code`, `grid`, `megaphone`, `palette`, `shield`, `trending-up`, `zap`
+
+**Response:**
+
+```json
+{
+  "id": "cat-developer-tools",
+  "category": "developer-tools",
+  "name": "Developer Tools",
+  "description": "Skills for building and debugging software",
+  "icon": "code",
+  "sample_keywords": "debug, lint, test, build"
+}
+```
+
+Returns `409 Conflict` if the slug already exists or conflicts with an existing skill slug.
+
+#### Update a Category
+
+```bash
+curl -X PUT "https://api.agentpowers.ai/v1/admin/categories/{slug}" \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "description": "Updated description",
+    "icon": "zap"
+  }'
+```
+
+**Request body (`CategoryUpdateRequest`):**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | No | Updated display name. The slug is immutable. |
+| `description` | string | No | Updated description. |
+| `icon` | string | No | Updated Lucide icon name. Must be a valid icon. |
+| `sample_keywords` | string | No | Updated keywords. |
+
+All fields are optional, but at least one must be provided. Returns `400` if no fields are supplied.
+
+**Response:** Returns the full updated category object including `id`, `category`, `name`, `description`, `icon`, `sample_keywords`, and `updated_at`.
+
 ### Refunds
 
 - `POST /v1/admin/refunds/{purchase_id}` -- issue a full Stripe refund for a completed purchase
 
 The refund is processed through Stripe. The existing `charge.refunded` webhook handler automatically updates the database, deactivates the license, and emails the buyer.
+
+#### Issue a Refund
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/refunds/{purchase_id}" \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reason": "Customer requested refund due to compatibility issue"
+  }'
+```
+
+**Request body (`AdminRefundRequest`):**
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `reason` | string | No | `""` | Reason for the refund. Stored in the audit log. |
+
+**Response:**
+
+```json
+{
+  "refund_id": "re_xxxxx",
+  "status": "succeeded",
+  "amount_cents": 999
+}
+```
+
+Returns `400` if the purchase is not in `completed` status or has no PaymentIntent. Returns `404` if the purchase does not exist. Returns `503` if Stripe is unavailable.
+
+### Marketing Email
+
+`POST /v1/admin/marketing-email` sends a marketing email to all users who have opted in to marketing communications.
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/marketing-email" \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subject": "New skills available on AgentPowers",
+    "html_body": "<h1>Check out our latest skills</h1><p>We have added 10 new skills this week.</p>"
+  }'
+```
+
+**Request body (`MarketingEmailRequest`):**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `subject` | string | Yes | Email subject line. |
+| `html_body` | string | Yes | HTML content of the email body. |
+
+**Response:** Returns the result from the email service, including the number of recipients the email was sent to.
 
 ### Pending Deletions
 
