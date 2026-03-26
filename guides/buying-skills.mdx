@@ -146,7 +146,7 @@ Returns `{ url, slug, license_code }` where `url` is an R2 presigned download li
 for 1 hour) and `license_code` is the purchase license code. No auth header required —
 the Stripe session ID acts as the bearer token.
 
-Returns `403` if the payment webhook hasn't fired yet (try again in a few seconds).
+Returns `403` if the session is not yet paid (e.g., payment is processing or the checkout expired).
 
 ### License Codes
 
