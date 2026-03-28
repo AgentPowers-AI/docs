@@ -160,6 +160,23 @@
             }
           },
           {
+            "name": "author",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Author"
+            }
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -1599,6 +1616,23 @@
               "default": 0,
               "title": "Offset"
             }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(newest|popular|name)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sort"
+            }
           }
         ],
         "responses": {
@@ -2387,6 +2421,46 @@
               "type": "string",
               "title": "Slug"
             }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 5,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(newest|oldest|highest|lowest)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sort"
+            }
           }
         ],
         "responses": {
@@ -2481,6 +2555,11 @@
               }
             ],
             "title": "Avatar Url"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "default": false
           }
         },
         "type": "object",
@@ -3086,6 +3165,28 @@
           "purchased_at": {
             "type": "string",
             "title": "Purchased At"
+          },
+          "author_display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Display Name"
+          },
+          "author_display_name_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Display Name Slug"
           }
         },
         "type": "object",
@@ -3333,6 +3434,14 @@
               }
             ],
             "title": "Average Rating"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
           }
         },
         "type": "object",
@@ -3340,7 +3449,9 @@
           "items",
           "total",
           "skill_slug",
-          "average_rating"
+          "average_rating",
+          "limit",
+          "offset"
         ],
         "title": "ReviewListResponse"
       },
