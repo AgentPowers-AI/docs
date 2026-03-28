@@ -46,6 +46,46 @@
         }
       }
     },
+    "/v1/auth/cli-token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Exchange For Cli Token",
+        "description": "Exchange a Clerk JWT for a long-lived CLI token.",
+        "operationId": "exchange_for_cli_token_v1_auth_cli_token_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/revoke-cli-token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Revoke Current Cli Token",
+        "description": "Revoke the CLI token used in this request. Only accepts CLI tokens.",
+        "operationId": "revoke_current_cli_token_v1_auth_revoke_cli_token_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/billing/portal": {
       "post": {
         "tags": [
@@ -2019,6 +2059,356 @@
         }
       }
     },
+    "/v1/admin/claims/sandbox": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Review Sandboxed Claims",
+        "description": "List sandboxed claims awaiting admin review.\n\nReturns claims with status 'sandbox', joined with skill and user\ndata for display in the admin dashboard.\n\nArgs:\n    user: Authenticated admin caller.\n    db: Database connection.\n    limit: Max results per page (max 100).\n    offset: Pagination offset.\n\nReturns:\n    dict with ``items`` (list of claim dicts) and ``total`` (int).",
+        "operationId": "review_sandboxed_claims_v1_admin_claims_sandbox_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Review Sandboxed Claims V1 Admin Claims Sandbox Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/claims/{claim_id}/approve": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Approve Claim",
+        "description": "Approve a sandboxed claim, transferring skill ownership to the claimant.\n\nLooks up the claim, validates it is in 'sandbox' state, then atomically:\n- Sets ``claims.status`` to ``'approved'`` and records ``reviewed_at``.\n- Sets ``skills.claimed = TRUE`` and ``skills.author_id`` to the claimant.\n\nArgs:\n    claim_id: Primary key of the claim to approve.\n    user: Authenticated admin caller.\n    db: Database connection.\n\nReturns:\n    dict with ``id``, ``status``, and ``message``.\n\nRaises:\n    HTTPException 404: Claim does not exist.\n    HTTPException 400: Claim is not in 'sandbox' state.",
+        "operationId": "approve_claim_v1_admin_claims__claim_id__approve_post",
+        "parameters": [
+          {
+            "name": "claim_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Claim Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Approve Claim V1 Admin Claims  Claim Id  Approve Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/abuse/flagged": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "List Abuse Flags",
+        "description": "List abuse flags with optional filtering.\n\nArgs:\n    user: Authenticated admin caller.\n    db: Database connection.\n    status: Filter by flag status (e.g. 'open', 'resolved_legit').\n    flag_type: Filter by flag type (e.g. 'BUYER_SELLER_BURST').\n    limit: Max results per page (max 100).\n    offset: Pagination offset.\n\nReturns:\n    dict with ``items`` (list of flag dicts) and ``total`` (int).",
+        "operationId": "list_abuse_flags_v1_admin_abuse_flagged_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "flag_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Flag Type"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Abuse Flags V1 Admin Abuse Flagged Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/abuse/{flag_id}/resolve": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Resolve Flag",
+        "description": "Resolve an abuse flag.\n\nArgs:\n    flag_id: Primary key of the flag to resolve.\n    body: Resolution details (resolution status and optional notes).\n    user: Authenticated admin caller.\n    db: Database connection.\n\nReturns:\n    dict with the updated flag data.\n\nRaises:\n    HTTPException 404: Flag does not exist.",
+        "operationId": "resolve_flag_v1_admin_abuse__flag_id__resolve_post",
+        "parameters": [
+          {
+            "name": "flag_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Flag Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveFlagRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Resolve Flag V1 Admin Abuse  Flag Id  Resolve Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/abuse/hold-account/{user_id}": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Hold Account",
+        "description": "Hold a user account (freeze for investigation).\n\nArgs:\n    user_id: The target user to hold.\n    body: Reason for the hold.\n    user: Authenticated admin caller.\n    db: Database connection.\n\nReturns:\n    dict with status and user_id.\n\nRaises:\n    HTTPException 404: Target user does not exist.",
+        "operationId": "hold_account_v1_admin_abuse_hold_account__user_id__post",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HoldAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Hold Account V1 Admin Abuse Hold Account  User Id  Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/abuse/release-account/{user_id}": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Release Account",
+        "description": "Release a held user account.\n\nArgs:\n    user_id: The target user to release.\n    user: Authenticated admin caller.\n    db: Database connection.\n\nReturns:\n    dict with status and user_id.\n\nRaises:\n    HTTPException 404: Target user does not exist.",
+        "operationId": "release_account_v1_admin_abuse_release_account__user_id__post",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Release Account V1 Admin Abuse Release Account  User Id  Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/installations": {
       "post": {
         "tags": [
@@ -2044,6 +2434,65 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InstallationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/security/scan/{slug}": {
+      "post": {
+        "tags": [
+          "security"
+        ],
+        "summary": "Trigger Scan",
+        "description": "Trigger a security scan for a skill.\n\nOnly the skill author can trigger scans. When version is specified,\nscans the version-specific package and promotes or blocks the version.",
+        "operationId": "trigger_scan_v1_security_scan__slug__post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityScanResponse"
                 }
               }
             }
@@ -2088,6 +2537,87 @@
                 "schema": {
                   "$ref": "#/components/schemas/SecurityResultsResponse"
                 }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/security/check/{content_hash}": {
+      "get": {
+        "tags": [
+          "security"
+        ],
+        "summary": "Check Scan Cache",
+        "description": "Check scan cache for a content hash. Returns cached result or 404.",
+        "operationId": "check_scan_cache_v1_security_check__content_hash__get",
+        "parameters": [
+          {
+            "name": "content_hash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Content Hash"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/security/scan-package": {
+      "post": {
+        "tags": [
+          "security"
+        ],
+        "summary": "Scan External Package",
+        "description": "Upload an external skill package for security scanning.\n\nRuns the full security pipeline, caches the result by content hash,\nand returns the verdict.\n\nSECURITY: The server computes the content hash from the uploaded\nZIP contents. The client-supplied content_hash field is ignored.\nThis prevents hash-spoofing attacks where a client uploads benign\ncontent with a forged hash to poison the scan cache.",
+        "operationId": "scan_external_package_v1_security_scan_package_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_scan_external_package_v1_security_scan_package_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           },
@@ -4456,11 +4986,5 @@
         "title": "ValidationError"
       }
     }
-  },
-  "servers": [
-    {
-      "url": "https://api.agentpowers.ai",
-      "description": "Production"
-    }
-  ]
+  }
 }
