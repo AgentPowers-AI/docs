@@ -1,0 +1,7 @@
+/* AgentPowers docs custom styles */
+
+/* Increase sidebar logo size to match frontend (44px vs default 28px) */
+#navbar img[alt*="logo"],
+#navbar img[src*="logo"] {
+  height: 36px !important;
+}

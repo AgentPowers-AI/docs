@@ -12,8 +12,8 @@
     "dark": "/logo/logo_agentpowers.svg",
     "light": "/logo/logo_agentpowers-light.svg"
   },
-  "font": {
-    "headings": {
+  "fonts": {
+    "heading": {
       "family": "Space Grotesk",
       "weight": 700
     },
