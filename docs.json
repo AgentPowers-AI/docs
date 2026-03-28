@@ -8,6 +8,19 @@
     "dark": "#2A9D98"
   },
   "favicon": "/favicon.svg",
+  "logo": {
+    "dark": "/logo/logo_agentpowers.svg",
+    "light": "/logo/logo_agentpowers-light.svg"
+  },
+  "font": {
+    "headings": {
+      "family": "Space Grotesk",
+      "weight": 700
+    },
+    "body": {
+      "family": "DM Sans"
+    }
+  },
   "navigation": {
     "tabs": [
       {
