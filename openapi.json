@@ -3793,6 +3793,22 @@
             "type": "integer",
             "title": "Download Count"
           },
+          "rating_average": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating Average"
+          },
+          "rating_count": {
+            "type": "integer",
+            "title": "Rating Count",
+            "default": 0
+          },
           "published_at": {
             "anyOf": [
               {
@@ -4053,6 +4069,22 @@
           "download_count": {
             "type": "integer",
             "title": "Download Count"
+          },
+          "rating_average": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating Average"
+          },
+          "rating_count": {
+            "type": "integer",
+            "title": "Rating Count",
+            "default": 0
           },
           "author": {
             "anyOf": [
