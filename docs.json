@@ -53,7 +53,6 @@
             "group": "Reference",
             "pages": [
               "guides/account-deletion",
-              "guides/admin-access",
               "guides/error-codes",
               "guides/rate-limits",
               "guides/roadmap"
