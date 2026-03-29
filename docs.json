@@ -44,6 +44,7 @@
               "guides/plugin-usage",
               "guides/codex-plugin",
               "guides/claude-extension",
+              "guides/mcp-server",
               "guides/security-pipeline",
               "guides/external-skills"
             ]

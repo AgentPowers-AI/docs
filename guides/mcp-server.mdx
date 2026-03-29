@@ -1,0 +1,88 @@
+---
+title: Remote MCP Server
+description: Use AgentPowers directly in claude.ai via the remote MCP server
+icon: plug
+---
+
+## Overview
+
+The AgentPowers remote MCP server lets you browse, search, and explore the
+marketplace directly from [claude.ai](https://claude.ai). No CLI installation
+required -- just add the server URL to your claude.ai settings and start
+discovering skills in conversation.
+
+<Note>
+  The remote server handles **discovery and commerce only**. To install skills
+  to your local machine, use the [CLI](/guides/cli-usage) or the
+  [Claude Desktop extension](/guides/claude-extension).
+</Note>
+
+## Setup
+
+### Add to claude.ai
+
+1. Open [claude.ai](https://claude.ai) and go to **Settings**
+2. Navigate to **Integrations** (or **MCP Servers**)
+3. Click **Add Custom Integration**
+4. Enter the server URL:
+
+```
+https://api.agentpowers.ai/mcp/sse
+```
+
+5. Save and start a new conversation
+
+### Verify it works
+
+In a new conversation, try:
+
+> "Search AgentPowers for productivity skills"
+
+Claude should use the `search_marketplace` tool and return results from the
+marketplace.
+
+## Available tools
+
+The remote MCP server exposes 7 tools for marketplace interaction:
+
+| Tool | Description |
+|------|-------------|
+| `search_marketplace` | Search by keyword, category, or type with configurable limits |
+| `get_skill_details` | Full details for a skill or agent by slug, including pricing and security status |
+| `get_categories` | List all skill categories with live skill counts |
+| `get_seller_profile` | View a seller's profile, bio, and published skills |
+| `get_skill_reviews` | Read reviews and ratings for a skill |
+| `get_platforms` | List supported AI platforms for skill installation |
+| `start_checkout` | Start a Stripe checkout session for a paid skill |
+
+### Example prompts
+
+- "What categories of skills are available on AgentPowers?"
+- "Show me the details for the code-review skill"
+- "Find security-related skills"
+- "Who is the seller behind this skill?"
+- "What platforms can I install skills to?"
+
+## Limitations
+
+The remote MCP server is designed for **discovery and browsing**. The following
+features require the [CLI](/guides/cli-usage) or
+[Claude Desktop extension](/guides/claude-extension):
+
+- **Authentication** -- login, profile management, purchase history
+- **Installation** -- downloading and installing skills to your local machine
+- **Publishing** -- uploading and managing your own skills
+- **Checkout completion** -- the `start_checkout` tool returns a URL to visit;
+  payment is completed on the AgentPowers website
+
+## Technical details
+
+- **Protocol:** MCP over SSE (Server-Sent Events)
+- **Endpoint:** `https://api.agentpowers.ai/mcp/sse`
+- **Message endpoint:** `https://api.agentpowers.ai/mcp/messages` (auto-discovered)
+- **Authentication:** None required (public marketplace data)
+
+## Source
+
+The remote MCP server is part of the
+[AgentPowers API](https://github.com/AgentPowers-AI/agentpowers-app) codebase.
