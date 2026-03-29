@@ -3484,6 +3484,17 @@
             "type": "string",
             "title": "Author Display Name"
           },
+          "author_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Slug"
+          },
           "created_at": {
             "type": "string",
             "title": "Created At"
@@ -3605,12 +3616,22 @@
           "total": {
             "type": "integer",
             "title": "Total"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
           }
         },
         "type": "object",
         "required": [
           "items",
-          "total"
+          "total",
+          "limit",
+          "offset"
         ],
         "title": "SellerListResponse"
       },
