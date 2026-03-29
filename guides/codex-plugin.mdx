@@ -1,0 +1,71 @@
+---
+title: Codex Plugin
+description: Install and use the AgentPowers marketplace plugin for OpenAI Codex
+icon: puzzle-piece
+---
+
+## Overview
+
+The AgentPowers Codex plugin is an MCP server that integrates the
+AgentPowers marketplace directly into Codex and compatible editors
+(Claude Code, Cursor, Windsurf, Gemini CLI, and others).
+
+## Installation
+
+### UI method
+
+1. Open Codex
+2. Go to **Plugins** and click **+**
+3. Add the plugin repo: `https://github.com/AgentPowers-AI/codex-plugin`
+4. Say "Log me into AgentPowers" to authenticate
+
+### CLI method
+
+Clone the repo and register the MCP server:
+
+```bash
+git clone https://github.com/AgentPowers-AI/codex-plugin.git
+cd codex-plugin
+codex mcp add agentpowers-marketplace -- bash -lc \
+  'ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd); node "$ROOT/scripts/agentpowers-mcp-server.mjs"'
+```
+
+## Usage
+
+Once installed, interact with the marketplace using plain English prompts:
+
+- "Find the best skill for writing documentation"
+- "Search AgentPowers for code review skills"
+- "Install my purchased skill for Claude Desktop"
+- "Check if any of my installed skills have updates"
+
+## Available tools
+
+The plugin provides the same MCP tools as the Claude Code plugin:
+
+| Tool | Description |
+|------|-------------|
+| `search_marketplace` | Search skills by keyword, category, or type |
+| `get_skill_details` | View full details for a skill or agent |
+| `install_skill` | Download and install a skill to any supported platform |
+| `check_installed` | List all installed skills with version and status |
+| `uninstall_skill` | Remove an installed skill |
+| `check_for_updates` | Check for newer versions of installed skills |
+| `check_purchase_status` | Check the status of a purchase |
+
+## Supported platforms
+
+The plugin can install skills to any of these AI tools via the
+`target_tool` parameter:
+
+- Claude Code (`claude-code`)
+- Claude Desktop (`claude-desktop`)
+- Codex (`codex`)
+- Gemini CLI (`gemini`)
+- Kiro (`kiro`)
+- Any other tool via `~/.{tool}/skills/` convention
+
+## Source
+
+[AgentPowers-AI/codex-plugin](https://github.com/AgentPowers-AI/codex-plugin)
+on GitHub.

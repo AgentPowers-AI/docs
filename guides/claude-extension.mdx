@@ -1,0 +1,90 @@
+---
+title: Claude Desktop Extension
+description: Browse, purchase, and install skills directly in Claude Desktop
+icon: desktop
+---
+
+## Overview
+
+The AgentPowers Claude Desktop extension brings the full marketplace
+experience into Claude Desktop. Browse skills, read reviews, purchase
+with Stripe, and install to any supported platform — all without
+leaving your conversation.
+
+## Installation
+
+1. Download `claude-extension.mcpb` from the
+   [latest release](https://github.com/AgentPowers-AI/claude-extension/releases)
+2. Drag the file into Claude Desktop, or double-click it
+3. Click **Install** when prompted
+
+No terminal or manual configuration required.
+
+## Usage
+
+After installation, use natural language to interact with the marketplace:
+
+- "Search AgentPowers for productivity skills"
+- "Show me details and reviews for the code-review skill"
+- "Buy the premium debugging skill"
+- "Install my purchased skill for Kiro"
+- "What skills do I have installed?"
+
+## Available tools
+
+The extension provides a comprehensive set of tools:
+
+### Discovery
+
+| Tool | Description |
+|------|-------------|
+| `search_marketplace` | Search by keyword, category, or type |
+| `get_skill_details` | Full details including description and pricing |
+| `get_categories` | Browse available skill categories |
+| `get_seller_profile` | View a seller's profile and published skills |
+| `get_skill_reviews` | Read reviews and ratings |
+| `get_security_results` | View security scan results |
+| `get_platforms` | List supported installation platforms |
+
+### Account
+
+| Tool | Description |
+|------|-------------|
+| `login_account` | Authenticate with AgentPowers |
+| `logout_account` | Sign out |
+| `whoami_account` | Check current login status |
+| `get_account_profile` | View your profile |
+
+### Purchasing
+
+| Tool | Description |
+|------|-------------|
+| `list_purchases` | View your purchase history |
+| `start_checkout` | Begin a Stripe checkout for a paid skill |
+| `check_purchase_status` | Check payment status and get license code |
+| `download_purchased_skill` | Download a purchased skill package |
+
+### Installation
+
+| Tool | Description |
+|------|-------------|
+| `install_skill` | Install a free or purchased skill |
+| `install_purchased_skill` | Install using a license code |
+| `check_installed` | List installed skills with versions |
+| `uninstall_skill` | Remove an installed skill |
+| `check_for_updates` | Check for newer versions |
+
+## Supported platforms
+
+The extension can install skills to any supported AI tool:
+
+- Claude Code, Claude Desktop
+- Codex
+- Gemini CLI
+- Kiro
+- And more via the `~/.{tool}/skills/` convention
+
+## Source
+
+[AgentPowers-AI/claude-extension](https://github.com/AgentPowers-AI/claude-extension)
+on GitHub.
