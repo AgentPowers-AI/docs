@@ -3925,6 +3925,16 @@
             "type": "integer",
             "title": "Download Count"
           },
+          "view_count": {
+            "type": "integer",
+            "title": "View Count",
+            "default": 0
+          },
+          "install_count": {
+            "type": "integer",
+            "title": "Install Count",
+            "default": 0
+          },
           "rating_average": {
             "anyOf": [
               {
@@ -4201,6 +4211,16 @@
           "download_count": {
             "type": "integer",
             "title": "Download Count"
+          },
+          "view_count": {
+            "type": "integer",
+            "title": "View Count",
+            "default": 0
+          },
+          "install_count": {
+            "type": "integer",
+            "title": "Install Count",
+            "default": 0
           },
           "rating_average": {
             "anyOf": [
