@@ -6,16 +6,13 @@ icon: plug
 
 ## Overview
 
-The AgentPowers remote MCP server lets you browse, search, and explore the
-marketplace directly from [claude.ai](https://claude.ai). No CLI installation
+The AgentPowers remote MCP server lets you browse, search, and interact with
+the marketplace directly from [claude.ai](https://claude.ai). No CLI installation
 required -- just add the server URL to your claude.ai settings and start
 discovering skills in conversation.
 
-<Note>
-  The remote server handles **discovery and commerce only**. To install skills
-  to your local machine, use the [CLI](/guides/cli-usage) or the
-  [Claude Desktop extension](/guides/claude-extension).
-</Note>
+With OAuth authentication enabled, you can also view your account profile and
+purchase history directly in claude.ai.
 
 ## Setup
 
@@ -27,10 +24,17 @@ discovering skills in conversation.
 4. Enter the server URL:
 
 ```
-https://api.agentpowers.ai/mcp/sse
+https://api.agentpowers.ai/mcp
 ```
 
 5. Save and start a new conversation
+
+### Authenticate (optional)
+
+To use authenticated tools (profile, purchase history), click **Configure** on
+the AgentPowers integration. This opens the AgentPowers login page where you can
+sign in with your existing account. Once authenticated, claude.ai will include
+your credentials in all requests automatically.
 
 ### Verify it works
 
@@ -43,7 +47,9 @@ marketplace.
 
 ## Available tools
 
-The remote MCP server exposes 7 tools for marketplace interaction:
+The remote MCP server exposes 9 tools:
+
+### Public tools (no authentication required)
 
 | Tool | Description |
 |------|-------------|
@@ -53,7 +59,19 @@ The remote MCP server exposes 7 tools for marketplace interaction:
 | `get_seller_profile` | View a seller's profile, bio, and published skills |
 | `get_skill_reviews` | Read reviews and ratings for a skill |
 | `get_platforms` | List supported AI platforms for skill installation |
-| `start_checkout` | Start a checkout for a paid skill (stub -- redirects to website) |
+
+### Authenticated tools (requires OAuth)
+
+| Tool | Description |
+|------|-------------|
+| `start_checkout` | Start purchasing a paid skill |
+| `get_account_profile` | View your AgentPowers account profile |
+| `list_purchases` | List your purchased skills with license codes |
+
+<Note>
+  If you call an authenticated tool without being signed in, you'll get a
+  helpful message asking you to configure the integration first.
+</Note>
 
 ### Example prompts
 
@@ -61,26 +79,37 @@ The remote MCP server exposes 7 tools for marketplace interaction:
 - "Show me the details for the code-review skill"
 - "Find security-related skills"
 - "Who is the seller behind this skill?"
-- "What platforms can I install skills to?"
+- "Show me my AgentPowers purchases"
+- "What's my AgentPowers profile?"
+
+## Authentication
+
+The remote server uses OAuth 2.0 with PKCE (Proof Key for Code Exchange) for
+secure authentication. When you click **Configure** on the integration:
+
+1. claude.ai discovers the OAuth endpoints via `/.well-known/oauth-authorization-server`
+2. It registers as an OAuth client (one-time, automatic)
+3. You're redirected to the AgentPowers login page
+4. After signing in, an authorization code is exchanged for access tokens
+5. Tokens are refreshed automatically -- you stay signed in
+
+Your access tokens expire after 1 hour and are automatically refreshed.
 
 ## Limitations
 
-The remote MCP server is designed for **discovery and browsing**. The following
-features require the [CLI](/guides/cli-usage) or
+The following features require the [CLI](/guides/cli-usage) or
 [Claude Desktop extension](/guides/claude-extension):
 
-- **Authentication** -- login, profile management, purchase history
 - **Installation** -- downloading and installing skills to your local machine
 - **Publishing** -- uploading and managing your own skills
-- **Checkout completion** -- the `start_checkout` tool returns a URL to visit;
-  payment is completed on the AgentPowers website
 
 ## Technical details
 
-- **Protocol:** MCP over SSE (Server-Sent Events)
-- **Endpoint:** `https://api.agentpowers.ai/mcp/sse`
-- **Message endpoint:** `https://api.agentpowers.ai/mcp/messages` (auto-discovered)
-- **Authentication:** None required (public marketplace data)
+- **Protocol:** MCP over Streamable HTTP (primary) + SSE (legacy)
+- **Primary endpoint:** `https://api.agentpowers.ai/mcp`
+- **Legacy SSE endpoint:** `https://api.agentpowers.ai/mcp/sse`
+- **OAuth discovery:** `https://api.agentpowers.ai/.well-known/oauth-authorization-server`
+- **Token endpoint:** `https://api.agentpowers.ai/v1/oauth/token`
 
 ## Source
 
