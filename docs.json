@@ -76,6 +76,11 @@
           "anchor": "Website",
           "href": "https://agentpowers.ai",
           "icon": "globe"
+        },
+        {
+          "anchor": "Discord",
+          "href": "https://discord.gg/ECAzvrvHA",
+          "icon": "discord"
         }
       ]
     }
@@ -91,7 +96,8 @@
   "footer": {
     "socials": {
       "github": "https://github.com/AgentPowers-AI",
-      "x": "https://x.com/agentpowersAI"
+      "x": "https://x.com/agentpowersAI",
+      "discord": "https://discord.gg/ECAzvrvHA"
     }
   },
   "api": {
