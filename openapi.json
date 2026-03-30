@@ -358,6 +358,42 @@
         }
       }
     },
+    "/v1/skills/{slug}/view": {
+      "post": {
+        "tags": [
+          "skills"
+        ],
+        "summary": "Track View",
+        "description": "Record a view for a skill. Unauthenticated, rate-limited.",
+        "operationId": "track_view_v1_skills__slug__view_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/skills/{slug}/upload": {
       "post": {
         "tags": [
