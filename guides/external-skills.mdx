@@ -100,7 +100,9 @@ External skills receive the same security treatment as native AgentPowers skills
 | Check | Description |
 |-------|-------------|
 | Static validation | File type checks, dangerous pattern scanning |
-| Malware detection | Scanned for known malware and malicious patterns |
+| Malware detection | ClamAV signatures and VirusTotal multi-engine scan |
+| Dependency scan | Snyk CVE detection for known vulnerabilities |
+| Supply chain analysis | GuardDog (Python) and Socket.dev (npm) |
 | AI security review | Semantic analysis for injection, auth flaws, data exposure |
 | Agent-specific checks | Tool audit, instruction analysis, trust scoring |
 

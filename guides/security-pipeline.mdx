@@ -9,33 +9,37 @@ Every skill and agent submission passes through a multi-layer security pipeline 
 
 ## Pipeline Stages
 
-The pipeline runs 8 layers in sequence. Layers that don't apply (e.g., dependency scanning on a pure-markdown skill) are skipped gracefully.
+The pipeline runs 9 layers in sequence. Layers that don't apply (e.g., dependency scanning on a pure-markdown skill) are skipped gracefully.
 
-### 1a. File Type Validation
+### 1. File Type Validation
 
 Only allowed file types pass through. Disallowed extensions (executables, compiled binaries) are rejected immediately.
 
-### 1b. Pattern Scanning
+### 2. Pattern Scanning
 
 Checks for dangerous patterns: shell commands, environment variable harvesting, obfuscation techniques, and known attack signatures.
 
-### 1c. ClamAV Signature Scan
+### 3. ClamAV Signature Scan
 
 A local ClamAV malware signature scan catches known malware before spending external API quota. Runs in ~200ms.
 
-### 1d. Dependency Vulnerability Scan
+### 4. Dependency Vulnerability Scan (Snyk)
 
 Scans dependency manifests (requirements.txt, package.json, pyproject.toml) for known CVEs using Snyk. Skipped if no manifests are present.
 
-### 1e. Supply Chain Analysis
+### 5. Supply Chain Analysis -- Python (GuardDog)
 
-GuardDog detects supply chain attacks that vulnerability scanners miss: typosquatting, dependency confusion, and install-time code execution.
+GuardDog detects Python supply chain attacks that vulnerability scanners miss: typosquatting, dependency confusion, and install-time code execution.
 
-### 1f. VirusTotal Malware Scan
+### 6. Supply Chain Analysis -- npm (Socket.dev)
+
+Socket.dev analyzes npm dependencies for supply chain risks including install scripts, network access, and obfuscated code.
+
+### 7. VirusTotal Malware Scan
 
 The full package is uploaded to VirusTotal for scanning by 70+ antivirus engines. Results are polled with linear backoff.
 
-### 2. AI Security Review
+### 8. AI Security Review
 
 An AI-powered semantic analysis checks for:
 
@@ -44,7 +48,7 @@ An AI-powered semantic analysis checks for:
 - **Data exposure** -- Leaking user data or API keys
 - **Privilege escalation** -- Requesting unnecessary permissions
 
-### 3. Agent-Specific Checks
+### 9. Agent-Specific Checks
 
 Submissions of type `agent` receive additional scrutiny:
 

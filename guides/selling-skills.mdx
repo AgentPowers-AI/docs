@@ -384,7 +384,7 @@ curl -X POST "https://api.agentpowers.ai/v1/admin/categories" \
 Update an existing category (partial update — only supply fields to change):
 
 ```bash
-curl -X PUT "https://api.agentpowers.ai/v1/admin/categories/{category_id}" \
+curl -X PUT "https://api.agentpowers.ai/v1/admin/categories/{slug}" \
   -H "Authorization: Bearer ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"description": "Updated description"}'
@@ -393,7 +393,7 @@ curl -X PUT "https://api.agentpowers.ai/v1/admin/categories/{category_id}" \
 Delete a category (blocked if any non-archived skills reference it):
 
 ```bash
-curl -X DELETE "https://api.agentpowers.ai/v1/admin/categories/{category_id}" \
+curl -X DELETE "https://api.agentpowers.ai/v1/admin/categories/{slug}" \
   -H "Authorization: Bearer ADMIN_TOKEN"
 ```
 

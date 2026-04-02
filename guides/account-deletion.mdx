@@ -41,11 +41,11 @@ Returns:
 
 Sign in to your account at any point before the deletion date to automatically cancel the request, or cancel explicitly:
 
-### Via the Dashboard
+### Cancel via the Dashboard
 
 Return to **Settings → Account** and click **Cancel Deletion**.
 
-### Via the API
+### Cancel via the API
 
 ```bash
 curl -X POST "https://api.agentpowers.ai/v1/users/me/cancel-deletion" \
@@ -86,7 +86,7 @@ Deletion may be delayed if:
 - You have **pending payouts** that haven't cleared yet — wait for the payout to process
 - You have **in-progress purchases** — wait for checkout to complete
 
-The API returns a `400` with a `DELETION_BLOCKED` code if a blocker is detected. Resolve the blocker and retry.
+The API returns a `409 Conflict` with a detail message describing the blocker. Resolve the blocker and retry.
 
 ## Email Reminders
 

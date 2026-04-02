@@ -13,16 +13,6 @@ The AgentPowers API uses per-IP rate limiting to ensure fair usage and protect a
 | **Authenticated read** | 10 requests/minute | Authenticated GET endpoints (earnings, purchases, profile) |
 | **Write** | 20 requests/minute | All POST, PATCH, DELETE endpoints (publish, checkout, reviews) |
 
-## Response Headers
-
-Every API response includes rate limit headers:
-
-| Header | Description |
-|--------|-------------|
-| `X-RateLimit-Limit` | Maximum requests allowed in the current window |
-| `X-RateLimit-Remaining` | Requests remaining in the current window |
-| `X-RateLimit-Reset` | Unix timestamp when the window resets |
-
 ## Handling 429 Responses
 
 When you exceed the rate limit, the API returns a `429 Too Many Requests` response:
@@ -35,8 +25,6 @@ When you exceed the rate limit, the API returns a `429 Too Many Requests` respon
   }
 }
 ```
-
-The `Retry-After` header indicates how many seconds to wait before retrying.
 
 ### Recommended Strategy
 

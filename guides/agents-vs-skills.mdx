@@ -97,22 +97,26 @@ ap detail code-reviewer
 
 Agents receive **additional security scrutiny** beyond what skills get:
 
-1. **Layers 1-2** (shared): File type validation, pattern scanning, VirusTotal, ClamAV, Snyk, GuardDog, AI review
-2. **Layer 3** (agent-only): Tool access audit, instruction analysis for social engineering or prompt injection, trust level scoring
+1. **Layers 1-8** (shared): File type validation, pattern scanning, ClamAV, Snyk, GuardDog, Socket.dev, VirusTotal, AI review
+2. **Layer 9** (agent-only): Tool access audit, instruction analysis for social engineering or prompt injection, trust level scoring
 
 The trust level (`low`, `medium`, `high`) indicates the assessed risk based on which tools the agent requests access to.
 
 ## Categories
 
-Agent-specific categories help with discovery:
+Agents and skills share the same 7 canonical categories:
 
 | Category | Description |
 |----------|-------------|
-| `code-agents` | Code review, testing, refactoring, and generation |
-| `automation-agents` | Workflow orchestration, task coordination, pipeline automation |
-| `research-agents` | Information gathering, data analysis, research automation |
+| `marketing` | Content marketing, social media, SEO |
+| `development` | Code review, testing, refactoring, and generation |
+| `productivity` | Workflow orchestration, task management, automation |
+| `design` | UI/UX, visual design, prototyping |
+| `sales` | Outreach, CRM, lead generation |
+| `data` | Analytics, data science, ML |
+| `security` | Auditing, scanning, compliance |
 
-Agents can also appear in general categories like `dev-tools`, `security`, `productivity`, and `ai-ml` based on their description.
+Categories are assigned automatically based on the skill's description and content.
 
 ## Publishing Agents
 
