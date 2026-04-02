@@ -284,6 +284,124 @@ ap claim my-clawhub-skill
 
 Claims are verified against your GitHub account. Most claims are processed automatically.
 
+## Admin API Reference
+
+<Warning>
+  All endpoints in this section require admin privileges. Requests from
+  non-admin accounts return `403 Forbidden`.
+</Warning>
+
+These features are API-only. There is no frontend dashboard for them; use `curl` or a REST client.
+
+### API-Only Admin Features
+
+The following capabilities are available exclusively through the API:
+
+- **Claims management** — Review and resolve ClawHub ownership claims
+- **Abuse flags** — Inspect and action flagged accounts or skills
+- **Category CRUD** — Create, update, and delete marketplace categories
+- **Refund processing** — Initiate refunds on completed purchases
+- **Pending deletion management** — Review accounts scheduled for deletion and cancel if needed
+- **Marketing email** — Send bulk opt-in email to users
+
+### Marketing Email
+
+Send a marketing email to all opted-in users:
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/marketing-email" \
+  -H "Authorization: Bearer ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subject": "New skills available this week",
+    "body": "Check out the latest additions to the marketplace..."
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "sent": 1042,
+  "skipped": 87
+}
+```
+
+`sent` is the count of emails dispatched. `skipped` is the count of users who have opted out of marketing email.
+
+### Refund Processing
+
+Initiate a refund on a completed purchase by its ID:
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/refunds/{purchase_id}" \
+  -H "Authorization: Bearer ADMIN_TOKEN"
+```
+
+**Response:**
+
+```json
+{
+  "refund_id": "re_1abc...",
+  "status": "succeeded",
+  "amount_cents": 500
+}
+```
+
+The Stripe `charge.refunded` webhook fires automatically and handles the DB update, license revocation, and buyer notification email. The admin endpoint only initiates the refund.
+
+### Pending Deletions
+
+List accounts that have requested deletion and are awaiting the retention window:
+
+```bash
+curl -H "Authorization: Bearer ADMIN_TOKEN" \
+  "https://api.agentpowers.ai/v1/admin/pending-deletions"
+```
+
+Cancel a scheduled deletion (e.g., after a fraud review or user appeal):
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/cancel-deletion/{user_id}" \
+  -H "Authorization: Bearer ADMIN_TOKEN"
+```
+
+### Category Management
+
+Create a new category:
+
+```bash
+curl -X POST "https://api.agentpowers.ai/v1/admin/categories" \
+  -H "Authorization: Bearer ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Finance",
+    "description": "Skills for financial analysis and reporting",
+    "icon": "chart-line"
+  }'
+```
+
+Update an existing category (partial update — only supply fields to change):
+
+```bash
+curl -X PUT "https://api.agentpowers.ai/v1/admin/categories/{category_id}" \
+  -H "Authorization: Bearer ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Updated description"}'
+```
+
+Delete a category (blocked if any non-archived skills reference it):
+
+```bash
+curl -X DELETE "https://api.agentpowers.ai/v1/admin/categories/{category_id}" \
+  -H "Authorization: Bearer ADMIN_TOKEN"
+```
+
+<Note>
+  Category slugs are immutable after creation. The `id` field is auto-generated
+  as `cat-{slug}` (e.g., `cat-finance`).
+</Note>
+
 ## Need Help?
 
 <CardGroup cols={2}>
