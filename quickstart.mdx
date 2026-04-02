@@ -6,12 +6,26 @@ description: Get started with AgentPowers in under 5 minutes
 ## Install
 
 <Tabs>
-  <Tab title="MCP Server (Recommended)">
+  <Tab title="Plugin (Recommended)">
+    Install the full plugin with MCP tools, skills, and session hooks:
+    ```bash
+    claude plugin add AgentPowers-AI/agentpowers-plugin
+    ```
+    See [Plugin guide](/guides/plugin-usage) for full setup.
+  </Tab>
+  <Tab title="MCP Server">
     Add to your Claude Code MCP config:
     ```bash
     npx @agentpowers/mcp-server
     ```
     See [MCP Server guide](/guides/mcp-server) for full setup.
+  </Tab>
+  <Tab title="Skill (Zero Dependencies)">
+    Add the standalone skill — no Node.js or Python required:
+    ```bash
+    claude skill add AgentPowers-AI/agentpowers-skill
+    ```
+    See [Skill guide](/guides/skill-usage) for details.
   </Tab>
   <Tab title="CLI (pip)">
     ```bash
