@@ -6,10 +6,12 @@ description: Get started with AgentPowers in under 5 minutes
 ## Install
 
 <Tabs>
-  <Tab title="Claude Code Plugin (Recommended)">
+  <Tab title="MCP Server (Recommended)">
+    Add to your Claude Code MCP config:
     ```bash
-    claude plugin add agentpowers
+    npx @agentpowers/mcp-server
     ```
+    See [MCP Server guide](/guides/mcp-server) for full setup.
   </Tab>
   <Tab title="CLI (pip)">
     ```bash
@@ -51,19 +53,22 @@ For paid skills, the CLI opens a Stripe Checkout page. After purchase, you recei
 ap install premium-agent --code XXXXXXXX-XXXXXXXX-XXXXXXXX
 ```
 
-## Use the Plugin (In-Conversation)
+## Use In-Conversation (MCP Server)
 
-Install the AgentPowers plugin locally in Claude Code:
+The MCP server gives Claude access to marketplace tools during your conversation. Add it to your Claude Code settings or `.mcp.json`:
 
-```bash
-claude plugin add --local /path/to/agentpowers-plugin
+```json
+{
+  "mcpServers": {
+    "agentpowers": {
+      "command": "npx",
+      "args": ["@agentpowers/mcp-server"]
+    }
+  }
+}
 ```
 
-<Note>
-Registry-based installation (`claude /plugin install agentpowers`) is coming soon.
-</Note>
-
-Once enabled, Claude can search and install skills during your conversation through the MCP server tools.
+See [MCP Server guide](/guides/mcp-server) for full setup details.
 
 ## Publish a Skill
 

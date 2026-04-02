@@ -5,14 +5,15 @@ description: Browse and install skills directly inside Claude Code conversations
 
 ## Installation
 
-Install the AgentPowers plugin locally in Claude Code:
+Clone the plugin repo and install locally:
 
 ```bash
-claude plugin add --local /path/to/agentpowers-plugin
+git clone https://github.com/AgentPowers-AI/agentpowers-plugin.git
+claude /plugin add ./agentpowers-plugin
 ```
 
 <Note>
-Registry-based installation (`claude /plugin install agentpowers`) is coming soon. For now, clone the plugin directory and install locally.
+Alternatively, use the [MCP Server](/guides/mcp-server) (`npx @agentpowers/mcp-server`) for zero-install in-conversation access.
 </Note>
 
 The plugin runs an MCP server that gives Claude access to marketplace tools during your conversation.
