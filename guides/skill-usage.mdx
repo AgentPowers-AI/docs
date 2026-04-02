@@ -1,0 +1,90 @@
+---
+title: Skill Usage
+description: Use the standalone AgentPowers skill with zero dependencies
+---
+
+## Installation
+
+```bash
+claude skill add AgentPowers-AI/agentpowers-skill
+```
+
+No Node.js, Python, or other dependencies required. The skill uses only `curl` and `bash`.
+
+## What It Does
+
+The skill teaches Claude how to interact with the AgentPowers marketplace directly. Once installed, Claude can:
+
+- **Search** the marketplace for skills and agents
+- **View details** for any skill including price, security status, and description
+- **Install free skills** by downloading and extracting packages
+- **Purchase paid skills** by opening Stripe Checkout (requires authentication)
+
+## Using the Skill
+
+After installing, try asking Claude:
+
+```
+Find me a code review skill
+```
+
+```
+Search the AgentPowers marketplace for security tools
+```
+
+```
+Install the skill called my-awesome-skill
+```
+
+Claude will use `curl` to call the AgentPowers API and present results in a clean format.
+
+## Authentication
+
+The skill works without authentication for:
+
+- Searching the marketplace
+- Viewing skill details
+- Installing free skills
+
+For paid skills, you need to authenticate first:
+
+```bash
+pip install agentpowers
+ap login
+```
+
+The skill automatically detects the auth token at `~/.agentpowers/auth.json`.
+
+## Limitations vs Plugin
+
+The standalone skill is lightweight but has fewer features than the [full plugin](/guides/plugin-usage):
+
+| Feature | Skill | Plugin |
+|---------|-------|--------|
+| Search and browse | Yes | Yes |
+| Install skills | Yes | Yes |
+| Proactive suggestions | No | Yes |
+| Guided `/ap` command | No | Yes |
+| Session hooks | No | Yes |
+| Dependencies | None | Node.js |
+
+## Upgrading to the Plugin
+
+If you want the full experience, install the plugin:
+
+```bash
+claude plugin add AgentPowers-AI/agentpowers-plugin
+```
+
+The plugin includes everything the skill does plus proactive marketplace suggestions, a guided `/ap` flow, and session hooks that keep your marketplace context fresh.
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card title="Email Support" icon="envelope" href="mailto:support@agentpowers.ai">
+    Reach us at **support@agentpowers.ai** for account issues, billing questions, or technical help.
+  </Card>
+  <Card title="Discord Community" icon="discord" href="https://discord.gg/ECAzvrvHA">
+    Join the **AgentPowers Discord** to get help from the team and other creators in real time.
+  </Card>
+</CardGroup>

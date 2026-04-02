@@ -42,6 +42,7 @@
               "guides/agents-vs-skills",
               "guides/cli-usage",
               "guides/plugin-usage",
+              "guides/skill-usage",
               "guides/codex-plugin",
               "guides/claude-extension",
               "guides/mcp-server",
