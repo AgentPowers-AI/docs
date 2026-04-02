@@ -5,11 +5,10 @@ description: Browse and install skills directly inside Claude Code conversations
 
 ## Installation
 
-Clone the plugin repo and install locally:
+Install the plugin from GitHub:
 
 ```bash
-git clone https://github.com/AgentPowers-AI/agentpowers-plugin.git
-claude /plugin add ./agentpowers-plugin
+claude plugin add AgentPowers-AI/agentpowers-plugin
 ```
 
 <Note>
@@ -27,6 +26,17 @@ ap login
 ```
 
 The plugin picks up the token automatically.
+
+## Guided Flow (`/ap`)
+
+Type `/ap` in any conversation to launch the guided marketplace experience:
+
+1. **Search** — Find skills by keyword
+2. **Browse categories** — Explore available categories
+3. **Check updates** — See if your installed skills have newer versions
+4. **Manage installed** — List and uninstall skills
+
+The `/ap` command uses the same MCP tools listed below but wraps them in a conversational flow.
 
 ## Available Tools
 
@@ -140,6 +150,19 @@ Check that the target directory exists and is writable:
 ```bash
 ls -la ~/.claude/skills/
 ```
+
+## Choosing Your Install Method
+
+| Feature | Plugin | MCP Server | Skill | CLI |
+|---------|--------|------------|-------|-----|
+| Install friction | Low | Low | Lowest | Medium |
+| Search marketplace | Yes | Yes | Yes | Yes |
+| Install skills | Yes | Yes | Yes | Yes |
+| Proactive suggestions | Yes | No | No | No |
+| Guided `/ap` flow | Yes | No | No | No |
+| Session hooks | Yes | No | No | No |
+| Works outside Claude Code | No | Yes | No | Yes |
+| Dependencies | Node.js | Node.js | None | Python |
 
 ## Need Help?
 
