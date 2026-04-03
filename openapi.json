@@ -431,7 +431,7 @@
           "skills"
         ],
         "summary": "Upload Skill Package",
-        "description": "Upload a skill package file to R2 storage.\n\nOnly the skill author can upload packages. Max 100 MB.\nWhen version is specified, uploads to the version-specific storage key.",
+        "description": "Upload a skill package file to R2 storage.\n\nOnly the skill author can upload packages. Max 10 MB.\nWhen version is specified, uploads to the version-specific storage key.",
         "operationId": "upload_skill_package_v1_skills__slug__upload_post",
         "parameters": [
           {
@@ -1045,7 +1045,7 @@
           "agents"
         ],
         "summary": "Upload Agent Package",
-        "description": "Upload an agent package file to R2 storage.\n\nOnly the agent author can upload packages. Max 100 MB.",
+        "description": "Upload an agent package file to R2 storage.\n\nOnly the agent author can upload packages. Max 10 MB.",
         "operationId": "upload_agent_package_v1_agents__slug__upload_post",
         "parameters": [
           {
