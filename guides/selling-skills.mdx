@@ -5,16 +5,29 @@ description: How to publish skills, set prices, and receive payouts
 
 ## Becoming a Seller
 
+### Prerequisites
+
+Before publishing, you need:
+
+1. **A display name** on your profile. Set it at [agentpowers.ai/dashboard/settings/profile](https://agentpowers.ai/dashboard/settings/profile) or via the API.
+2. **Stripe Connect** (for paid skills only). Complete onboarding at [agentpowers.ai/dashboard/become-seller](https://agentpowers.ai/dashboard/become-seller). Free skills can be published without Stripe.
+
 ### Payout Onboarding
 
-Before receiving payouts, complete the onboarding process via the CLI or API:
+Before receiving payouts, complete the onboarding process via the dashboard or API:
 
-```bash
-curl -X POST "https://api.agentpowers.ai/v1/sellers/connect" \
-  -H "Authorization: Bearer TOKEN"
-```
-
-This returns an onboarding URL. Complete the form to enable payouts.
+<Tabs>
+  <Tab title="Dashboard">
+    Go to [agentpowers.ai/dashboard/become-seller](https://agentpowers.ai/dashboard/become-seller) and click "Connect Stripe" to start the onboarding flow.
+  </Tab>
+  <Tab title="API">
+    ```bash
+    curl -X POST "https://api.agentpowers.ai/v1/sellers/connect" \
+      -H "Authorization: Bearer TOKEN"
+    ```
+    This returns an onboarding URL. Complete the form to enable payouts.
+  </Tab>
+</Tabs>
 
 ### Check Seller Status
 
@@ -29,6 +42,8 @@ Returns `is_seller` (true if onboarding is complete), `charges_enabled`, and `pa
 
 ### Check Earnings
 
+View your earnings in the [Seller Dashboard](https://agentpowers.ai/dashboard/earnings) or via the API:
+
 ```bash
 curl -H "Authorization: Bearer TOKEN" \
   "https://api.agentpowers.ai/v1/sellers/earnings"
@@ -40,9 +55,7 @@ Returns total earnings and sale count.
 
 ### Display Name Requirement
 
-Before publishing, you must set a display name on your profile. Publishing without a display name returns a `400 DISPLAY_NAME_REQUIRED` error.
-
-Set your display name via the API:
+Before publishing, you must set a display name on your profile. Go to [Dashboard > Settings > Profile](https://agentpowers.ai/dashboard/settings/profile) to set it, or use the API:
 
 ```bash
 curl -X PATCH "https://api.agentpowers.ai/v1/users/profile" \
@@ -51,36 +64,21 @@ curl -X PATCH "https://api.agentpowers.ai/v1/users/profile" \
   -d '{"display_name": "My Name"}'
 ```
 
-Your display name is automatically slugified into a URL-safe profile path (e.g. `"John Doe"` → `/sellers/john-doe`). If your chosen display name conflicts with an existing slug, a number suffix is appended automatically (`john-doe-2`).
+Your display name is automatically slugified into a URL-safe profile path (e.g. `"John Doe"` -> `/sellers/john-doe`). If your chosen display name conflicts with an existing slug, a number suffix is appended automatically (`john-doe-2`).
 
-Check your current profile:
-
-```bash
-curl -H "Authorization: Bearer TOKEN" \
-  "https://api.agentpowers.ai/v1/users/profile"
-```
-
-You can also update your bio and social links:
-
-```bash
-curl -X PATCH "https://api.agentpowers.ai/v1/users/profile" \
-  -H "Authorization: Bearer TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"display_name": "My Name", "bio": "I build great skills", "website_url": "https://example.com"}'
-```
+You can also update your bio and social links from the profile settings page.
 
 ## Publishing a Skill
 
 ### 1. Prepare Your Skill
 
-Create a directory with a `SKILL.md` file containing YAML frontmatter:
+Create a `.skill`, `.md`, or `.agent` file with YAML frontmatter:
 
 ```yaml
 ---
 title: My Awesome Skill
 description: A skill that does amazing things
 category: development
-type: skill
 ---
 
 # My Awesome Skill
@@ -88,24 +86,53 @@ type: skill
 Instructions for Claude when using this skill...
 ```
 
-<Note>
-Price is set via the `--price` flag when publishing (e.g., `ap publish ./my-skill --price 5.00`), not in the YAML frontmatter.
-</Note>
+For agents, include `tools` and/or `model` in the frontmatter:
 
-### 2. Login and Publish
-
-```bash
-ap login
-ap publish ./my-skill --price 5.00
+```yaml
+---
+name: Code Reviewer
+description: An autonomous code review agent
+tools: Read, Glob, Grep, Bash
+model: sonnet
+---
 ```
 
-The CLI:
+You can also prepare a directory with multiple files and ZIP it for upload.
 
-1. Packages your directory as a ZIP
-2. Creates the skill record via `POST /v1/skills`
-3. Uploads the package via `POST /v1/skills/{slug}/upload`
+<Note>
+Maximum upload size is **10 MB**. Most skills are well under 500 KB.
+</Note>
 
-Your skill starts at **v1.0.0**. Omit `--price` for free skills (defaults to $0).
+### 2. Publish
+
+<Tabs>
+  <Tab title="Website">
+    1. Go to [agentpowers.ai/dashboard/publish](https://agentpowers.ai/dashboard/publish)
+    2. Drop your `.skill`, `.agent`, `.md`, or `.zip` file
+    3. The form auto-fills from your frontmatter (title, description, category, type)
+    4. Review the details, set a price if desired, and click **Publish**
+
+    The file type determines whether it's published as a skill or agent:
+    - `.skill` files are published as skills
+    - `.agent` files are published as agents
+    - `.md` files with `tools` or `model` in frontmatter are published as agents, otherwise as skills
+    - `.zip` files require you to select the type manually
+  </Tab>
+  <Tab title="CLI">
+    ```bash
+    ap login
+    ap publish ./my-skill --price 5.00
+    ```
+
+    The CLI:
+
+    1. Packages your directory as a ZIP
+    2. Creates the skill record via `POST /v1/skills`
+    3. Uploads the package via `POST /v1/skills/{slug}/upload`
+
+    Your skill starts at **v1.0.0**. Omit `--price` for free skills (defaults to $0).
+  </Tab>
+</Tabs>
 
 ### 3. Publishing Updates
 

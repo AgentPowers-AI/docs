@@ -87,26 +87,49 @@ See [MCP Server guide](/guides/mcp-server) for full setup details.
 
 ## Publish a Skill
 
-<Steps>
-  <Step title="Create your skill directory">
-    ```
-    my-skill/
-    ├── SKILL.md      # Frontmatter with title, description, price
-    └── ...            # Your skill files
-    ```
-  </Step>
-  <Step title="Login">
-    ```bash
-    ap login
-    ```
-  </Step>
-  <Step title="Publish">
-    ```bash
-    ap publish ./my-skill
-    ```
+<Tabs>
+  <Tab title="Website (Recommended)">
+    <Steps>
+      <Step title="Create your skill file">
+        Write a `.skill` or `.md` file with YAML frontmatter:
+        ```yaml
+        ---
+        title: My Awesome Skill
+        description: A skill that does amazing things
+        category: development
+        ---
+
+        Instructions for Claude when using this skill...
+        ```
+      </Step>
+      <Step title="Go to the Publish page">
+        Navigate to [agentpowers.ai/dashboard/publish](https://agentpowers.ai/dashboard/publish) and sign in.
+      </Step>
+      <Step title="Upload and publish">
+        Drop your `.skill`, `.md`, or `.zip` file. The form auto-fills from your frontmatter. Review the details, set a price (or leave free), and hit Publish.
+      </Step>
+    </Steps>
     Your skill enters the security review pipeline. Once approved, it appears in the marketplace.
-  </Step>
-</Steps>
+  </Tab>
+  <Tab title="CLI">
+    <Steps>
+      <Step title="Create your skill directory">
+        ```
+        my-skill/
+        ├── SKILL.md      # Frontmatter with title, description
+        └── ...            # Your skill files
+        ```
+      </Step>
+      <Step title="Login and publish">
+        ```bash
+        ap login
+        ap publish ./my-skill --price 5.00
+        ```
+      </Step>
+    </Steps>
+    Your skill enters the security review pipeline. Once approved, it appears in the marketplace.
+  </Tab>
+</Tabs>
 
 ## Need Help?
 
