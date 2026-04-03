@@ -5,17 +5,30 @@ description: Browse and install skills directly inside Claude Code conversations
 
 ## Installation
 
-Install the plugin from GitHub:
+Add the AgentPowers MCP server to your Claude Code config:
 
 ```bash
-claude plugin add AgentPowers-AI/agentpowers-plugin
+claude mcp add agentpowers -- npx -y @agentpowers/mcp-server
+```
+
+Or add it manually to your `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "agentpowers": {
+      "command": "npx",
+      "args": ["@agentpowers/mcp-server"]
+    }
+  }
+}
 ```
 
 <Note>
-Alternatively, use the [MCP Server](/guides/mcp-server) (`npx @agentpowers/mcp-server`) for zero-install in-conversation access.
+Plugin marketplace support (`claude plugin install agentpowers`) is coming soon. In the meantime, the MCP server provides the full set of 26 marketplace tools.
 </Note>
 
-The plugin runs an MCP server that gives Claude access to marketplace tools during your conversation.
+The MCP server gives Claude access to marketplace tools during your conversation.
 
 ## Authentication
 
@@ -31,10 +44,10 @@ The plugin picks up the token automatically.
 
 Type `/ap` in any conversation to launch the guided marketplace experience:
 
-1. **Search** — Find skills by keyword
-2. **Browse categories** — Explore available categories
-3. **Check updates** — See if your installed skills have newer versions
-4. **Manage installed** — List and uninstall skills
+1. **Search** -- Find skills by keyword
+2. **Browse categories** -- Explore available categories
+3. **Check updates** -- See if your installed skills have newer versions
+4. **Manage installed** -- List and uninstall skills
 
 The `/ap` command uses the same MCP tools listed below but wraps them in a conversational flow.
 
@@ -126,12 +139,12 @@ The plugin works across:
 
 ## Troubleshooting
 
-### Plugin not loading
+### MCP server not loading
 
-Verify the plugin is installed and enabled:
+Verify the MCP server is configured:
 
 ```bash
-claude /plugin list
+claude mcp list
 ```
 
 ### Authentication errors
@@ -153,16 +166,16 @@ ls -la ~/.claude/skills/
 
 ## Choosing Your Install Method
 
-| Feature | Plugin | MCP Server | Skill | CLI |
-|---------|--------|------------|-------|-----|
-| Install friction | Low | Low | Lowest | Medium |
-| Search marketplace | Yes | Yes | Yes | Yes |
-| Install skills | Yes | Yes | Yes | Yes |
-| Proactive suggestions | Yes | No | No | No |
-| Guided `/ap` flow | Yes | No | No | No |
-| Session hooks | Yes | No | No | No |
-| Works outside Claude Code | No | Yes | No | Yes |
-| Dependencies | Node.js | Node.js | None | Python |
+| Feature | MCP Server | Skill | CLI |
+|---------|------------|-------|-----|
+| Install friction | Low | Lowest | Medium |
+| Search marketplace | Yes | Yes | Yes |
+| Install skills | Yes | Yes | Yes |
+| Proactive suggestions | No | No | No |
+| Guided `/ap` flow | No | No | No |
+| Session hooks | No | No | No |
+| Works outside Claude Code | Yes | No | Yes |
+| Dependencies | Node.js | None | Python |
 
 ## Need Help?
 
