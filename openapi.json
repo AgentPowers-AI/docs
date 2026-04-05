@@ -60,6 +60,111 @@
         ]
       }
     },
+    "/v1/auth/api-tokens": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "List Api Tokens Endpoint",
+        "description": "List all active API tokens for the current user (masked).",
+        "operationId": "list_api_tokens_endpoint_v1_auth_api_tokens_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTokenListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Create Api Token Endpoint",
+        "description": "Create a new API token. The full token is returned only once.",
+        "operationId": "create_api_token_endpoint_v1_auth_api_tokens_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTokenCreateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/api-tokens/{token_id}": {
+      "delete": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Revoke Api Token Endpoint",
+        "description": "Revoke an API token by ID.",
+        "operationId": "revoke_api_token_endpoint_v1_auth_api_tokens__token_id__delete",
+        "parameters": [
+          {
+            "name": "token_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTokenRevokeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/billing/portal": {
       "post": {
         "tags": [
@@ -3154,6 +3259,119 @@
         ],
         "title": "ActivityResponse"
       },
+      "ApiTokenCreateResponse": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "expires_at": {
+            "type": "string",
+            "title": "Expires At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "token",
+          "name",
+          "created_at",
+          "expires_at"
+        ],
+        "title": "ApiTokenCreateResponse"
+      },
+      "ApiTokenItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "masked_token": {
+            "type": "string",
+            "title": "Masked Token"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "masked_token",
+          "name"
+        ],
+        "title": "ApiTokenItem"
+      },
+      "ApiTokenListResponse": {
+        "properties": {
+          "tokens": {
+            "items": {
+              "$ref": "#/components/schemas/ApiTokenItem"
+            },
+            "type": "array",
+            "title": "Tokens"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tokens"
+        ],
+        "title": "ApiTokenListResponse"
+      },
+      "ApiTokenRevokeResponse": {
+        "properties": {
+          "revoked": {
+            "type": "boolean",
+            "title": "Revoked"
+          }
+        },
+        "type": "object",
+        "required": [
+          "revoked"
+        ],
+        "title": "ApiTokenRevokeResponse"
+      },
       "AuthorSummary": {
         "properties": {
           "display_name": {
@@ -3809,6 +4027,18 @@
           "status"
         ],
         "title": "ConnectOnboardingResponse"
+      },
+      "CreateApiTokenRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "title": "Name",
+            "default": "Default"
+          }
+        },
+        "type": "object",
+        "title": "CreateApiTokenRequest"
       },
       "CurrentUser": {
         "properties": {
