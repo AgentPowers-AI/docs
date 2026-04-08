@@ -6,23 +6,23 @@ description: Complete reference for the `ap` command-line tool
 ## Installation
 
 <Tabs>
-  <Tab title="Claude Code Plugin (Recommended)">
+  <Tab title="npx (Recommended)">
+    ```bash
+    npx @agentpowers/cli setup
+    ```
+    Auto-configures MCP for all detected AI tools. Also provides `search`, `install`, `login`, and `update` commands. Requires Node.js 18+.
+  </Tab>
+  <Tab title="Claude Code MCP">
     ```bash
     claude mcp add agentpowers -- npx -y @agentpowers/mcp-server
     ```
-    This installs AgentPowers as a Claude Code plugin with MCP integration.
+    Adds AgentPowers as an MCP server in Claude Code.
   </Tab>
   <Tab title="pip">
     ```bash
     pip install agentpowers
     ```
-    Installs the `ap` CLI command globally.
-  </Tab>
-  <Tab title="npx">
-    ```bash
-    npx @agentpowers/cli
-    ```
-    Run without installing. Requires Node.js 18+.
+    Installs the `ap` CLI command globally. Still supported but npx is preferred.
   </Tab>
 </Tabs>
 

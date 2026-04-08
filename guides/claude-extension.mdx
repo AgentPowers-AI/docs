@@ -13,12 +13,23 @@ leaving your conversation.
 
 ## Installation
 
-1. Download `claude-extension.mcpb` from the
-   [latest release](https://github.com/AgentPowers-AI/claude-extension/releases)
-2. Drag the file into Claude Desktop, or double-click it
-3. Click **Install** when prompted
+The recommended way to set up the AgentPowers extension is via the CLI setup command,
+which auto-configures MCP for all detected AI tools (including Claude Desktop):
 
-No terminal or manual configuration required.
+```bash
+npx @agentpowers/cli setup
+```
+
+<Accordion title="Legacy: .mcpb install (deprecated)">
+  The `.mcpb` bundle install method is deprecated in favor of `npx @agentpowers/cli setup`.
+
+  1. Download `claude-extension.mcpb` from the
+     [latest release](https://github.com/AgentPowers-AI/claude-extension/releases)
+  2. Drag the file into Claude Desktop, or double-click it
+  3. Click **Install** when prompted
+</Accordion>
+
+No terminal or manual configuration required with the setup command.
 
 ## Usage
 
