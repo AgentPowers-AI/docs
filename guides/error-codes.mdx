@@ -46,6 +46,8 @@ The HTTP status code indicates the error category. The `code` field enables prec
 | `PURCHASE_REQUIRED` | 403 | You need to purchase this paid skill before downloading. |
 | `PURCHASE_DUPLICATE` | 409 | You already own this skill. |
 | `PURCHASE_FREE_SKILL` | 400 | This skill is free and does not require a checkout. |
+| _(no code)_ | 503 | Seller has not completed payment onboarding (no Stripe Connect account). |
+| _(no code)_ | 503 | Seller payment account is not active (Stripe charges disabled). |
 
 ## Claim Errors
 
