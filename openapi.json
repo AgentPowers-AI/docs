@@ -3139,6 +3139,63 @@
         }
       }
     },
+    "/.well-known/agent-skills/index.json": {
+      "get": {
+        "tags": [
+          "well-known"
+        ],
+        "summary": "Agent Skills Index",
+        "operationId": "agent_skills_index__well_known_agent_skills_index_json_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/api-catalog": {
+      "get": {
+        "tags": [
+          "well-known"
+        ],
+        "summary": "Api Catalog",
+        "operationId": "api_catalog__well_known_api_catalog_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/oauth-protected-resource": {
+      "get": {
+        "tags": [
+          "well-known"
+        ],
+        "summary": "Oauth Protected Resource",
+        "operationId": "oauth_protected_resource__well_known_oauth_protected_resource_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/.well-known/oauth-authorization-server": {
       "get": {
         "tags": [
