@@ -3196,6 +3196,26 @@
         }
       }
     },
+    "/.well-known/mcp/server-card.json": {
+      "get": {
+        "tags": [
+          "well-known"
+        ],
+        "summary": "Mcp Server Card",
+        "description": "SEP-1649 MCP server card for the AgentPowers marketplace MCP server.",
+        "operationId": "mcp_server_card__well_known_mcp_server_card_json_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/.well-known/oauth-authorization-server": {
       "get": {
         "tags": [
