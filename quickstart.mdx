@@ -31,19 +31,23 @@ description: Get started with AgentPowers in under 5 minutes
     ```
     Then use `/agentpowers` in any Claude Code conversation. See [Skill guide](/guides/skill-usage) for details.
   </Tab>
-  <Tab title="CLI (pip)">
-    Install the Python CLI for terminal-based search, install, and publish:
+  <Tab title="CLI">
+    Run directly with npx (no global install needed):
     ```bash
-    pip install agentpowers
+    npx @agentpowers/cli setup
     ```
-    Then run `ap --help` to see available commands.
+    Auto-configures MCP for all detected AI tools. Requires Node.js 18+.
+
+    <Tip>
+    `pip install agentpowers` is still supported but npx is preferred.
+    </Tip>
   </Tab>
 </Tabs>
 
 ## Search for Skills
 
 ```bash
-ap search "code review"
+npx @agentpowers/cli search "code review"
 ```
 
 This returns a table of matching skills with titles, prices, security status, and download counts.
@@ -51,7 +55,7 @@ This returns a table of matching skills with titles, prices, security status, an
 ## Install a Free Skill
 
 ```bash
-ap install my-awesome-skill
+npx @agentpowers/cli install my-awesome-skill
 ```
 
 The CLI downloads and extracts the skill to `~/.claude/skills/my-awesome-skill/`.
@@ -59,13 +63,13 @@ The CLI downloads and extracts the skill to `~/.claude/skills/my-awesome-skill/`
 ## Install a Paid Skill
 
 ```bash
-ap install premium-agent
+npx @agentpowers/cli install premium-agent
 ```
 
 For paid skills, the CLI opens a Stripe Checkout page. After purchase, you receive a license code. The skill installs automatically after payment, or you can redeem the license code later:
 
 ```bash
-ap install premium-agent --code XXXXXXXX-XXXXXXXX-XXXXXXXX
+npx @agentpowers/cli install premium-agent --code XXXXXXXX-XXXXXXXX-XXXXXXXX
 ```
 
 ## Use In-Conversation (MCP Server)
@@ -122,8 +126,8 @@ See [MCP Server guide](/guides/mcp-server) for full setup details.
       </Step>
       <Step title="Login and publish">
         ```bash
-        ap login
-        ap publish ./my-skill --price 5.00
+        npx @agentpowers/cli login
+        npx @agentpowers/cli publish --dir ./my-skill --price 5.00
         ```
       </Step>
     </Steps>
