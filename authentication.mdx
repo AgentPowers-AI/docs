@@ -76,6 +76,26 @@ The MCP plugin shares the same auth token stored by the CLI. Log in once with th
 | `GET /v1/sellers/{slug}` | No |
 | `GET /v1/sellers/{slug}/skills` | No |
 
+## Test Accounts
+
+Accounts flagged `is_test_user = true` are sandbox accounts (used by QA tooling and internal
+testing) that are prevented from triggering real-world side effects. The flag is returned on
+`GET /v1/auth/me` so callers can verify their account state.
+
+For a flagged account, the API:
+
+- Returns `403` on `POST /v1/checkout` — no Stripe Checkout session is created.
+- Returns `403` on `POST /v1/sellers/connect` — no Stripe Connect account is onboarded.
+- Skips transactional email sends (receipts, sale notifications, payout confirmations,
+  skill-published notices). The endpoint returns success to the caller, but no email leaves the system.
+
+Skill slugs with the prefix `qa-sandbox-` are also hidden from the public `GET /v1/search`
+endpoint so QA-published skills never surface to real buyers. Such slugs remain directly
+fetchable via `GET /v1/skills/{slug}` for tooling that needs to inspect them.
+
+The flag is set manually by platform operators on the `users` table; there is no public API
+to toggle it.
+
 ## Rate Limits
 
 | Tier | Limit |
