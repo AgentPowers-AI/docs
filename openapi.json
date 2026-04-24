@@ -4158,11 +4158,6 @@
               }
             ],
             "title": "Github Username"
-          },
-          "is_test_user": {
-            "type": "boolean",
-            "title": "Is Test User",
-            "default": false
           }
         },
         "type": "object",
