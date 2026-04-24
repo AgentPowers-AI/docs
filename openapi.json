@@ -411,7 +411,7 @@
           "skills"
         ],
         "summary": "Get Skill",
-        "description": "Get skill details by slug.",
+        "description": "Get skill details by slug.\n\nTest-user authored skills are hidden from public callers but visible\nto their own author when authenticated.",
         "operationId": "get_skill_v1_skills__slug__get",
         "parameters": [
           {
@@ -1018,7 +1018,7 @@
           "agents"
         ],
         "summary": "Get Agent",
-        "description": "Get agent details by slug.",
+        "description": "Get agent details by slug.\n\nTest-user authored agents are hidden from public callers but visible\nto their own author when authenticated.",
         "operationId": "get_agent_v1_agents__slug__get",
         "parameters": [
           {
@@ -2534,7 +2534,7 @@
           "detail"
         ],
         "summary": "Get Detail",
-        "description": "Get full detail for a skill by slug.\n\nTries native DB first, then external sources.",
+        "description": "Get full detail for a skill by slug.\n\nTries native DB first, then external sources. Test-user authored skills\nare hidden from public callers but visible to their own author.",
         "operationId": "get_detail_v1_detail__slug__get",
         "parameters": [
           {
