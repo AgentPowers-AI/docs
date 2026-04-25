@@ -2871,7 +2871,7 @@
           "reviews"
         ],
         "summary": "List Reviews",
-        "description": "List reviews for a skill (public, no auth required).",
+        "description": "List reviews for a skill. Public, but test-user skills 404 to\nnon-owners (prevents using this endpoint as an existence oracle\nfor qa-sandbox-* slugs).",
         "operationId": "list_reviews_v1_skills__slug__reviews_get",
         "parameters": [
           {
