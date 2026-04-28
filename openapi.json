@@ -435,6 +435,9 @@
               }
             }
           },
+          "404": {
+            "description": "Skill not found, or hidden from this caller"
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -1041,6 +1044,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Agent not found, or hidden from this caller"
           },
           "422": {
             "description": "Validation Error",
@@ -2574,6 +2580,9 @@
               }
             }
           },
+          "404": {
+            "description": "Skill not found, or hidden from this caller"
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -2934,6 +2943,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Skill not found, or hidden from this caller"
           },
           "422": {
             "description": "Validation Error",
