@@ -6386,7 +6386,7 @@
           },
           "description": {
             "type": "string",
-            "maxLength": 2000,
+            "maxLength": 1024,
             "minLength": 10,
             "title": "Description"
           },
@@ -6677,7 +6677,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "maxLength": 2000,
+                "maxLength": 1024,
                 "minLength": 10
               },
               {
