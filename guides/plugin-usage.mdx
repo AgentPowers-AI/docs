@@ -25,7 +25,14 @@ Or add it manually to your `.mcp.json`:
 ```
 
 <Note>
-Plugin marketplace support (`claude plugin install agentpowers`) is coming soon. In the meantime, the MCP server provides the full set of 26 marketplace tools.
+The full Claude Code plugin is also available. Install it with:
+
+```bash
+claude plugin marketplace add AgentPowers-AI/agentpowers-plugin
+claude plugin install agentpowers@agentpowers-plugin
+```
+
+The plugin bundles the MCP server below plus session hooks, post-install reminders, and the `/ap` guided flow.
 </Note>
 
 The MCP server gives Claude access to marketplace tools during your conversation.
