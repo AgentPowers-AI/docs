@@ -102,10 +102,10 @@ ap detail ontology --scan              # Deep security scan
 ### Free Skills
 
 ```bash
-ap install my-awesome-skill
+ap install my-awesome-skill --scope user
 ```
 
-Downloads and extracts to `~/.claude/skills/my-awesome-skill/`.
+Downloads and extracts to `~/.claude/skills/my-awesome-skill/`. Pass `--scope project` instead to land it under the current project's `.claude/skills/`.
 
 ### Paid Skills
 
@@ -133,19 +133,40 @@ ap install ontology --source clawhub
 
 External skills are downloaded to a sandbox, hashed, scanned through the full security pipeline, and only installed if they pass. See the [External Skills guide](/guides/external-skills) for details.
 
-### Multi-Tool Install
+### Install Scope
 
-Install for a specific AI tool using `--for`:
+Every `ap install` requires an explicit install scope — there is no default.
 
 ```bash
-ap install my-skill                          # default: claude-code (~/.claude/skills/)
-ap install my-skill --for codex              # installs to ~/.codex/skills/
-ap install my-skill --for claude-code        # explicit claude-code target
-ap install my-skill --global                 # force global install (skip project-local)
-ap install my-skill --for codex --global     # global codex install
+ap install my-skill --scope user             # → ~/.claude/skills/my-skill/ (available everywhere)
+ap install my-skill --scope project          # → ./.claude/skills/my-skill/ (only this project)
 ```
 
-When run from a directory with a `.claude/` folder, `ap install` installs project-locally to `<cwd>/.claude/skills/` instead of `~/.claude/skills/`. Use `--global` to override this behavior.
+- **`--scope user`** — installs to `~/.claude/skills/`. The skill is available in every project you launch Claude Code from. Use this for general-purpose tools.
+- **`--scope project`** — installs to `<cwd>/.claude/skills/`. The skill is only available when Claude Code is launched inside this project (or any subdirectory). Commit `.claude/skills/<slug>/` with your repo to share with your team.
+
+If you omit `--scope` in an interactive terminal, the CLI prompts:
+
+```text
+Install scope?
+  [u] user — ~/.claude/skills (available everywhere)
+  [p] project — ./.claude/skills (only this project)
+>
+```
+
+In non-interactive contexts (scripts, CI), omitting `--scope` exits 1 with an actionable error.
+
+The legacy `--global` flag still works as an alias for `--scope user`.
+
+### Multi-Tool Install
+
+Combine `--scope` with `--for` to install for a different AI tool:
+
+```bash
+ap install my-skill --scope user --for codex          # ~/.codex/skills/my-skill/
+ap install my-skill --scope project --for claude-code # ./.claude/skills/my-skill/
+ap install my-skill --scope user --for agents         # ~/.agents/skills/my-skill/  (cross-client)
+```
 
 ## Publishing
 
@@ -281,7 +302,7 @@ This checks each installed skill's current content hash against the recorded pin
 | `ap profile --set` | Interactively update display name and bio |
 | `ap search <query>` | Search the marketplace (unified, sectioned results) |
 | `ap detail <slug>` | View skill or agent details (`--source`, `--scan` flags) |
-| `ap install <slug>` | Install a skill (`--code`, `--source`, `--for`, `--global` flags) |
+| `ap install <slug>` | Install a skill (`--scope` required; `--code`, `--source`, `--for`, `--global` flags) |
 | `ap publish <path>` | Publish or update a skill (`--price`, `--bump`, `--version`, `--changelog` flags) |
 | `ap update [slug]` | Update installed skills to latest versions (`--force` flag) |
 | `ap scan <slug>` | Scan an external skill without installing |
