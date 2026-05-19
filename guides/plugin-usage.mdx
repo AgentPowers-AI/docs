@@ -92,7 +92,12 @@ Install a skill or agent directly from conversation:
 "Install the code-review-pro skill"
 ```
 
-For free skills, installation happens immediately. For paid skills, Claude opens Stripe Checkout in your browser. The plugin checks security status before installing and saves a version pin for update tracking.
+Claude will ask **where** to install before proceeding:
+
+- **user** scope — `~/.claude/skills/` (available in every project)
+- **project** scope — `./.claude/skills/` (only in this project; commit with the repo to share)
+
+`install_skill` requires the `scope` argument explicitly — there is no default. The `/ap` skill guides Claude to ask the question before invoking the tool. For free skills, installation happens immediately after you pick a scope. For paid skills, Claude opens Stripe Checkout in your browser; the scope question comes after payment completes. The plugin checks security status before installing and saves a version pin for update tracking.
 
 ### check_purchase_status
 
@@ -112,7 +117,13 @@ List all installed skills and agents:
 "What skills do I have installed?"
 ```
 
-Shows each installed skill's version, source, security status, and whether it has been locally edited.
+Output is grouped by **scope** so you can see exactly where each skill lives:
+
+- **User** — `~/.claude/skills/` (and `~/.claude/agents/`)
+- **Project** — `./.claude/skills/` of the directory Claude Code was launched in (or any ancestor)
+- **Plugin (read-only)** — `~/.claude/plugins/<plugin>/skills/`, surfaced so you know what your environment is loading from plugins
+
+Each row shows the skill's version, source (`agentpowers`, `clawhub`, `plugin:<name>`, or `unknown` for unmanaged installs), security status, and whether it has been locally edited.
 
 ### uninstall_skill
 
