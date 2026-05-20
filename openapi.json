@@ -2041,7 +2041,7 @@
           "sellers"
         ],
         "summary": "Get Next Payout",
-        "description": "Return the next scheduled Stripe payout for this seller. Date math mirrors Stripe's scheduler: `daily` -> today + `delay_days`; `weekly` -> next `weekly_anchor` weekday + `delay_days` (today if today matches); `monthly` -> next `monthly_anchor` day-of-month + `delay_days`, clamped to the last valid day for anchors > days-in-month (e.g. 31 in February). Returns 404 when the seller has no Stripe Connect account, the payout schedule is `manual` or an unrecognized interval, or the Stripe Account API is unreachable; clients should treat 404 as 'no scheduled payout' and hide the UI gracefully. Returns 200 with `expected_date: null` when the available balance is zero.",
+        "description": "Next scheduled Stripe payout for the seller (G2 -- issue #140).\n\nSynthesized from Account.settings.payouts.schedule (interval +\nanchor + delay_days) + current Balance.available. Returns 404 when\nthere's no Connect account, the schedule is manual or unknown, or\nStripe is unreachable -- the frontend treats 404 as \"hide the row.\"\nReturns 200 with expected_date=null when the balance is zero so\nthe row hides gracefully without a 404 round-trip.",
         "operationId": "get_next_payout_v1_sellers_next_payout_get",
         "responses": {
           "200": {
@@ -2053,9 +2053,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "No Connect account, manual or unsupported payout interval, or Stripe Account API unreachable"
           }
         }
       }
