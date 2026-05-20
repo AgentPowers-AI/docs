@@ -2014,7 +2014,7 @@
           "sellers"
         ],
         "summary": "Get Earnings",
-        "description": "Get earnings summary for the current seller.",
+        "description": "Get earnings summary for the current seller, including Stripe Connect balance breakdown (available, in-transit, paid-out).",
         "operationId": "get_earnings_v1_sellers_earnings_get",
         "responses": {
           "200": {
@@ -2026,6 +2026,36 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/sellers/next-payout": {
+      "get": {
+        "tags": [
+          "sellers"
+        ],
+        "summary": "Get Next Payout",
+        "description": "Return the next scheduled Stripe payout for this seller. Returns 404 when the seller has no Stripe Connect account, the payout schedule is manual, or the Stripe Account API is unreachable; clients should treat 404 as 'no scheduled payout' and hide the UI gracefully. Returns 200 with `expected_date: null` when the available balance is zero.",
+        "operationId": "get_next_payout_v1_sellers_next_payout_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NextPayoutResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No Connect account, manual payout schedule, or Stripe Account API unreachable"
           }
         },
         "security": [
@@ -4243,6 +4273,24 @@
               }
             ],
             "title": "Max Price Cents"
+          },
+          "available_cents": {
+            "type": "integer",
+            "title": "Available Cents",
+            "default": 0,
+            "description": "Stripe Connect balance currently available for payout (USD cents)."
+          },
+          "in_transit_cents": {
+            "type": "integer",
+            "title": "In Transit Cents",
+            "default": 0,
+            "description": "Stripe Connect balance pending settlement, in flight to the seller's bank (USD cents)."
+          },
+          "paid_out_cents": {
+            "type": "integer",
+            "title": "Paid Out Cents",
+            "default": 0,
+            "description": "Lifetime cents paid out, derived as max(0, total_earnings_cents - available_cents - in_transit_cents)."
           }
         },
         "type": "object",
@@ -4254,6 +4302,39 @@
           "seller_tier"
         ],
         "title": "EarningsResponse"
+      },
+      "NextPayoutResponse": {
+        "properties": {
+          "expected_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Date",
+            "description": "ISO 8601 UTC timestamp of the next expected Stripe payout, or null when no balance is currently available for payout."
+          },
+          "expected_cents": {
+            "type": "integer",
+            "title": "Expected Cents",
+            "description": "Amount of the next expected payout in USD cents (mirrors the seller's currently available Stripe Balance)."
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "Always 'USD' in the current marketplace."
+          }
+        },
+        "type": "object",
+        "required": [
+          "expected_date",
+          "expected_cents",
+          "currency"
+        ],
+        "title": "NextPayoutResponse"
       },
       "HTTPValidationError": {
         "properties": {
