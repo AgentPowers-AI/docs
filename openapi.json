@@ -2041,7 +2041,7 @@
           "sellers"
         ],
         "summary": "Get Next Payout",
-        "description": "Next scheduled Stripe payout for the seller (G2 -- issue #140).\n\nSynthesized from Account.settings.payouts.schedule.delay_days +\ncurrent Balance.available. Returns 404 when there's no Connect\naccount, the schedule is manual, or Stripe is unreachable -- the\nfrontend treats 404 as \"hide the row.\" Returns 200 with\nexpected_date=null when the balance is zero so the row hides\ngracefully without a 404 round-trip.",
+        "description": "Next scheduled Stripe payout for the seller (G2 -- issue #140).\n\nSynthesized from Account.settings.payouts.schedule (interval +\nanchor + delay_days) + current Balance.available. Returns 404 when\nthere's no Connect account, the schedule is manual or unknown, or\nStripe is unreachable -- the frontend treats 404 as \"hide the row.\"\nReturns 200 with expected_date=null when the balance is zero so\nthe row hides gracefully without a 404 round-trip.",
         "operationId": "get_next_payout_v1_sellers_next_payout_get",
         "responses": {
           "200": {
