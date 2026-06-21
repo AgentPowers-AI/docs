@@ -1641,7 +1641,7 @@
           "search"
         ],
         "summary": "Search Marketplace",
-        "description": "Full-text search across skills and agents. Returns sectioned results.",
+        "description": "Full-text search across skills and agents. Returns sectioned results.\n\nSheds load past a process-wide concurrency cap so a request flood cannot\nstarve the event loop and wedge /health into the liveness-watchdog crash\nloop seen in the 2026-06-16 outage (issue #197). Per-IP rate limiting still\napplies first via the @limiter decorator; this is the last-resort backstop.",
         "operationId": "search_marketplace_v1_search_get",
         "parameters": [
           {
