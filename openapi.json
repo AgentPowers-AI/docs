@@ -1726,7 +1726,7 @@
           "search"
         ],
         "summary": "Get Categories",
-        "description": "Get all canonical categories with live skill counts.",
+        "description": "Get all canonical categories with live skill counts.\n\nServed from a stale-while-revalidate cache (see ``_get_categories_cached``)\nso a flood of /v1/categories cannot pin the anyio threadpool on the 3-4s\naggregation and starve the liveness /health check (issue #203).",
         "operationId": "get_categories_v1_categories_get",
         "responses": {
           "200": {
@@ -3278,7 +3278,7 @@
           "system"
         ],
         "summary": "Health Check",
-        "description": "Health check for Railway monitoring.",
+        "description": "Liveness/health check for Railway monitoring and the in-container watchdog.\n\nDeclared ``async`` (not ``def``) so it is served directly on the event loop\nand never needs an anyio threadpool slot. A flood of slow *synchronous*\nendpoints (e.g. /v1/categories' 3-4s aggregation) can pin all 40 threadpool\nthreads; a sync /health would queue behind them, miss the watchdog's\nconsecutive liveness checks, and trip the hard-exit crash loop (issue #203).\nReturning a static payload off the threadpool keeps liveness answerable\nunder that load.",
         "operationId": "health_check_health_get",
         "responses": {
           "200": {
