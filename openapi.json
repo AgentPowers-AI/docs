@@ -1694,6 +1694,16 @@
               ],
               "title": "Type"
             }
+          },
+          {
+            "name": "include_external",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Include External"
+            }
           }
         ],
         "responses": {
