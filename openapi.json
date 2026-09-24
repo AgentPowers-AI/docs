@@ -4324,6 +4324,18 @@
           "version": {
             "type": "string",
             "title": "Version"
+          },
+          "commit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Commit",
+            "description": "40-char git SHA of the deployed commit (from RAILWAY_GIT_COMMIT_SHA, falling back to GIT_COMMIT_SHA), or null when unknown."
           }
         },
         "type": "object",
