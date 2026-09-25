@@ -6842,7 +6842,14 @@
             "title": "New Version"
           },
           "version_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Version Id"
           },
           "status": {
@@ -6859,7 +6866,6 @@
           "slug",
           "previous_version",
           "new_version",
-          "version_id",
           "status",
           "message"
         ],
