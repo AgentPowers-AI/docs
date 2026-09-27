@@ -543,13 +543,66 @@
         }
       }
     },
+    "/v1/skills/{slug}/versions": {
+      "post": {
+        "tags": [
+          "skills"
+        ],
+        "summary": "Create Skill Version",
+        "description": "Create a new pending version of an existing skill.\n\nUsed by the NPX CLI update flow (metadata PATCH, then this, then upload).\nSame rules as a version-carrying PATCH: author only, one pending version\nper skill (409 SKILL_VERSION_PENDING), an explicit version must be valid\nsemver greater than the current one (422). Defaults to a patch bump.\nUpload the package next with ``POST /v1/skills/{slug}/upload``.",
+        "operationId": "create_skill_version_v1_skills__slug__versions_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillVersionCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillUpdateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/skills/{slug}/upload": {
       "post": {
         "tags": [
           "skills"
         ],
         "summary": "Upload Skill Package",
-        "description": "Upload a skill package file to R2 storage.\n\nOnly the skill author can upload packages. Max 10 MB.\nWhen version is specified, uploads to the version-specific storage key.",
+        "description": "Upload a skill package file to R2 storage.\n\nOnly the skill author can upload packages. Max 10 MB.\nWhen version is specified, uploads to the version-specific storage key.\nSend the package in the multipart field `file` (or `package`, not both).",
         "operationId": "upload_skill_package_v1_skills__slug__upload_post",
         "parameters": [
           {
@@ -579,7 +632,6 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
@@ -2628,6 +2680,91 @@
         }
       }
     },
+    "/v1/external/{source}/{slug}/download": {
+      "get": {
+        "tags": [
+          "external"
+        ],
+        "summary": "Download External Skill",
+        "description": "Fetch, security-scan and store an external skill; return a signed URL.\n\nThe archive comes from the source's download API (never its web page).\nOnly bytes that received a PASS or WARN verdict are stored and signed; a\nBLOCK verdict is refused with 403, and an incomplete scan with 503.",
+        "operationId": "download_external_skill_v1_external__source___slug__download_get",
+        "parameters": [
+          {
+            "name": "source",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Source"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,127}$",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Owner"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExternalDownloadResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The security scan blocked this skill"
+          },
+          "404": {
+            "description": "Unknown source, or no downloadable archive"
+          },
+          "502": {
+            "description": "Upstream failed or returned a non-archive payload"
+          },
+          "503": {
+            "description": "Scan incomplete or storage unavailable; retry later"
+          },
+          "504": {
+            "description": "Upstream timed out"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/users/profile": {
       "get": {
         "tags": [
@@ -3680,15 +3817,32 @@
       "Body_upload_skill_package_v1_skills__slug__upload_post": {
         "properties": {
           "file": {
-            "type": "string",
-            "contentMediaType": "application/octet-stream",
+            "anyOf": [
+              {
+                "type": "string",
+                "contentMediaType": "application/octet-stream"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "File"
+          },
+          "package": {
+            "anyOf": [
+              {
+                "type": "string",
+                "contentMediaType": "application/octet-stream"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package",
+            "description": "Alias of `file` (sent by NPX CLI <= 0.7.0). Send one."
           }
         },
         "type": "object",
-        "required": [
-          "file"
-        ],
         "title": "Body_upload_skill_package_v1_skills__slug__upload_post"
       },
       "CategoriesResponse": {
@@ -4301,6 +4455,72 @@
           "seller_tier"
         ],
         "title": "EarningsResponse"
+      },
+      "ExternalDownloadResponse": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          },
+          "security_status": {
+            "type": "string",
+            "title": "Security Status"
+          },
+          "security_score": {
+            "type": "integer",
+            "title": "Security Score"
+          },
+          "content_hash": {
+            "type": "string",
+            "title": "Content Hash"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url",
+          "slug",
+          "source",
+          "security_status",
+          "security_score",
+          "content_hash",
+          "expires_in"
+        ],
+        "title": "ExternalDownloadResponse",
+        "description": "Signed URL for a scanned external skill archive (issue #339).\n\n``url`` points at the stored, scanned artifact and expires after\n``expires_in`` seconds. ``security_status`` is the verdict for exactly\nthese bytes: \"pass\" or \"warn\" (a block is refused with 403)."
       },
       "HTTPValidationError": {
         "properties": {
@@ -6893,6 +7113,48 @@
           "storage_key"
         ],
         "title": "SkillUploadResponse"
+      },
+      "SkillVersionCreateRequest": {
+        "properties": {
+          "bump": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(patch|minor|major)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bump"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          },
+          "changelog": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changelog"
+          }
+        },
+        "type": "object",
+        "title": "SkillVersionCreateRequest",
+        "description": "Body of ``POST /v1/skills/{slug}/versions`` (the NPX CLI update flow).\n\nCreates a pending version only. Listing metadata sent here is ignored;\nuse ``PATCH /v1/skills/{slug}``. With neither ``bump`` nor ``version``\nthe version is bumped by patch."
       },
       "TokenResponse": {
         "properties": {
