@@ -596,6 +596,123 @@
         }
       }
     },
+    "/v1/skills/{slug}/failed-versions": {
+      "get": {
+        "tags": [
+          "skills"
+        ],
+        "summary": "Get Failed Version Notices",
+        "description": "Failed (never scanned) versions of your skill, newest first.\n\nAuthor only (admins may read). A version fails when its package was never\nuploaded or its scan could not complete; it is not a security verdict.",
+        "operationId": "get_failed_version_notices_v1_skills__slug__failed_versions_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "include_dismissed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Dismissed"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailedVersionNoticesResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not the author (or an admin)"
+          },
+          "404": {
+            "description": "Skill not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/skills/{slug}/failed-versions/{version_id}/dismiss": {
+      "post": {
+        "tags": [
+          "skills"
+        ],
+        "summary": "Dismiss Failed Version Notice",
+        "description": "Dismiss the notice for one failed version of your skill. Author only.\n\nPer version and stored server-side. If that version fails again later,\nthe notice shows again.",
+        "operationId": "dismiss_failed_version_notice_v1_skills__slug__failed_versions__version_id__dismiss_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DismissFailedVersionNoticeResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not the author"
+          },
+          "404": {
+            "description": "Skill, or failed version of this skill, not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/skills/{slug}/upload": {
       "post": {
         "tags": [
@@ -4397,6 +4514,29 @@
         "title": "DeletionRequest",
         "description": "Request body for account deletion."
       },
+      "DismissFailedVersionNoticeResponse": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "version_id": {
+            "type": "string",
+            "title": "Version Id"
+          },
+          "dismissed_at": {
+            "type": "string",
+            "title": "Dismissed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "version_id",
+          "dismissed_at"
+        ],
+        "title": "DismissFailedVersionNoticeResponse"
+      },
       "EarningsResponse": {
         "properties": {
           "total_earnings_cents": {
@@ -4521,6 +4661,89 @@
         ],
         "title": "ExternalDownloadResponse",
         "description": "Signed URL for a scanned external skill archive (issue #339).\n\n``url`` points at the stored, scanned artifact and expires after\n``expires_in`` seconds. ``security_status`` is the verdict for exactly\nthese bytes: \"pass\" or \"warn\" (a block is refused with 403)."
+      },
+      "FailedVersionNotice": {
+        "properties": {
+          "version_id": {
+            "type": "string",
+            "title": "Version Id"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "failed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failed At"
+          },
+          "reason_code": {
+            "type": "string",
+            "title": "Reason Code",
+            "description": "package_not_uploaded, package_unavailable, scan_incomplete, admin_cleared, or unknown"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "dismissed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dismissed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version_id",
+          "version",
+          "reason_code",
+          "reason",
+          "action",
+          "message"
+        ],
+        "title": "FailedVersionNotice",
+        "description": "A failed (never scanned) version of the caller's own skill.\n\nAuthor-only. Never included on public or buyer responses."
+      },
+      "FailedVersionNoticesResponse": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "notices": {
+            "items": {
+              "$ref": "#/components/schemas/FailedVersionNotice"
+            },
+            "type": "array",
+            "title": "Notices"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "notices"
+        ],
+        "title": "FailedVersionNoticesResponse"
       },
       "HTTPValidationError": {
         "properties": {
@@ -6321,6 +6544,13 @@
           "sales_count": {
             "type": "integer",
             "title": "Sales Count"
+          },
+          "failed_version_notices": {
+            "items": {
+              "$ref": "#/components/schemas/FailedVersionNotice"
+            },
+            "type": "array",
+            "title": "Failed Version Notices"
           }
         },
         "type": "object",
@@ -6703,7 +6933,8 @@
           "long_description": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "maxLength": 20000
               },
               {
                 "type": "null"
@@ -6756,6 +6987,24 @@
           "message": {
             "type": "string",
             "title": "Message"
+          },
+          "failed_version_notices": {
+            "items": {
+              "$ref": "#/components/schemas/FailedVersionNotice"
+            },
+            "type": "array",
+            "title": "Failed Version Notices"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice"
           }
         },
         "type": "object",
@@ -6999,7 +7248,8 @@
           "long_description": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "maxLength": 20000
               },
               {
                 "type": "null"
@@ -7079,6 +7329,24 @@
           "message": {
             "type": "string",
             "title": "Message"
+          },
+          "failed_version_notices": {
+            "items": {
+              "$ref": "#/components/schemas/FailedVersionNotice"
+            },
+            "type": "array",
+            "title": "Failed Version Notices"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice"
           }
         },
         "type": "object",
