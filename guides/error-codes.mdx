@@ -32,6 +32,7 @@ The HTTP status code indicates the error category. The `code` field enables prec
 |------|-------------|-------------|
 | `SKILL_NOT_FOUND` | 404 | The requested skill slug does not exist. |
 | `SKILL_BLOCKED` | 403 | The skill was blocked by the security review pipeline. |
+| _(no code)_ | 403 | The skill or agent package has not passed its security scan yet (the scan is still pending or running). Downloads, installs and purchased-package downloads are refused until the scan completes; retry afterwards. While an update to a published listing is being scanned, the live version stays downloadable. |
 | `SKILL_SLUG_TAKEN` | 409 | The slug is already in use. Choose a different name. |
 | `SKILL_NOT_OWNER` | 403 | You attempted to modify a skill you do not own. |
 | `SKILL_ARCHIVED` | 400 | The skill has been unpublished. Use `POST /v1/skills/{slug}/republish` to restore it. |
