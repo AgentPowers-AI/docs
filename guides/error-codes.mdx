@@ -38,6 +38,7 @@ The HTTP status code indicates the error category. The `code` field enables prec
 | `SKILL_ARCHIVED` | 400 | The skill has been unpublished. Use `POST /v1/skills/{slug}/republish` to restore it. |
 | `SKILL_VERSION_PENDING` | 409 | A new version is already pending security review. Wait for it to complete. |
 | `DISPLAY_NAME_REQUIRED` | 400 | You must set a display name before publishing. Update your profile first via `PATCH /v1/users/profile`. |
+| `LISTING_TEXT_REJECTED` | 422 | The listing's title, description or long description failed the security scan (for example prompt-injection text, a dangerous command, a hardcoded secret, or an unsafe link such as `javascript:`, credentials in a URL, or a raw IP host). Nothing was changed. The response's `detail.findings` lists each flagged `field`, `category` and `match`. Remove the flagged text and retry. Applies to `POST` and `PATCH` on `/v1/skills` and `/v1/agents`. |
 
 ## Purchase Errors
 
